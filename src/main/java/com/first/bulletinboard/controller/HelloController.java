@@ -13,6 +13,6 @@ public class HelloController {
     @ApiOperation(value = "hello", notes = "hello 출력")
     @GetMapping("/hello")
     public ResponseEntity<String> hello() {
-        return ResponseEntity.ok().body("hello");
+        return ResponseEntity.ok().body("bye");
     }
 }
