@@ -19,9 +19,9 @@ public class UserController {
         UserDto userDto = userService.join(userJoinRequest);
         return Response.success(new UserJoinResponse(userDto.getUserName(),userDto.getPassword()));
     }
-    @PostMapping("/join")
+    @PostMapping("/login")
     public Response<UserLoginResponse> login(@RequestBody UserLoginRequest userLoginRequest) {
-        String token = userService.login();
+        String token = userService.login(userLoginRequest.getUserName(), userLoginRequest.getPassword());
         return Response.success(new UserLoginResponse(token));
     }
 }

@@ -45,7 +45,8 @@ class UserControllerTest {
 
         when(userService.join(any())).thenReturn(mock(UserDto.class));
         mockMvc.perform(post("/api/v1/join")
-                .contentType(MediaType.APPLICATION_JSON)// 타입
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)// 타입
                 .content(objectMapper.writeValueAsBytes(userJoinRequest)))
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -57,6 +58,7 @@ class UserControllerTest {
 
         when(userService.join(any())).thenThrow(new AppException(ErrorCode.DUPLICATED_USER_NAME, "해당 userName이 중복됩니다."));
         mockMvc.perform(post("/api/v1/join")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON) // 타입
                         .content(objectMapper.writeValueAsBytes(userJoinRequest)))
                 .andDo(print())
@@ -85,7 +87,7 @@ class UserControllerTest {
         String password = "13579";
         // 무엇을 보내서 : name, pw
         when(userService.login(any(), any())).thenThrow(new AppException(ErrorCode.USERNAME_NOT_FOUND, ""));
-        // 무엇을 받을까? : USERNAME_NOT_FOUND
+        // 무엇을 받을까? : USERNAME_NOT_FOUND(404)
         mockMvc.perform(post("/api/v1/login")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
