@@ -15,6 +15,6 @@ public enum ErrorCode {
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 포스트가 없습니다."),
     DATABASE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "DB에러");
 
-    private HttpStatus httpStatus;
-    private String message;
+    private final HttpStatus httpStatus;
+    private final String message;
 }

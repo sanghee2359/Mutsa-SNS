@@ -1,16 +1,14 @@
 package com.first.bulletinboard.domain.dto;
 
-import com.first.bulletinboard.domain.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+@AllArgsConstructor
 @Builder
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 public class UserJoinResponse {
+    private Long userId;
     private String userName;
-    private String password;
-
 }
