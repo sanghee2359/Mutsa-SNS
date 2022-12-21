@@ -16,9 +16,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final UserService userService;
-    @Value("${jwt.token.secret}")
-    private String secretKey;
+//    private final UserService userService;
+//    @Value("${jwt.token.secret}")
+//    private String secretKey;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
@@ -26,8 +26,8 @@ public class SecurityConfig {
                 .csrf().disable()
                 .cors().and()
                 .authorizeRequests()
+                .antMatchers("/api/v1/users/join", "/api/v1/users/login").permitAll() // join, login은 언제나 가능
                 .antMatchers(HttpMethod.POST, "/api/v1/**").permitAll() // antMacher 순서대로 우선순위가 됨
-                .antMatchers("/api/v1/join", "/api/v1/login").permitAll() // join, login은 언제나 가능
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // jwt사용하는 경우 씀

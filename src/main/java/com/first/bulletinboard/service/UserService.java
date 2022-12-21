@@ -1,6 +1,6 @@
 package com.first.bulletinboard.service;
 
-import com.first.bulletinboard.domain.UserEntity;
+import com.first.bulletinboard.domain.User;
 import com.first.bulletinboard.domain.dto.UserDto;
 import com.first.bulletinboard.domain.dto.UserJoinRequest;
 import com.first.bulletinboard.exception.AppException;
@@ -8,42 +8,53 @@ import com.first.bulletinboard.exception.ErrorCode;
 import com.first.bulletinboard.repository.UserRepository;
 import com.first.bulletinboard.utils.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import static com.first.bulletinboard.exception.ErrorCode.INVALID_PASSWORD;
+import static com.first.bulletinboard.exception.ErrorCode.USERNAME_NOT_FOUND;
+
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
-    @Value("${jwt.token.secret}")
-    private String key;
-    private Long expiredTime = 1000 * 60 * 60L; // 1hour
-
+    @Value("${jwt.token.secret}") // spring에서 지원하는 어쩌고
+    private String secretKey;
+    private Long expireTimeMs = 1000 * 60 * 60L; // 1초 * 60 * 60 = 1hour
+    @Transactional
     public UserDto join(UserJoinRequest request) {
+        // 비즈니스 로직 - 회원 가입
+        // 회원 userName 중복 check
+        // 중복되면 회원가입 불가능 exception발생
         userRepository.findByUserName(request.getUserName())
-                .ifPresent(user->{ // userName 중복 체크
-                    throw new AppException(ErrorCode.DUPLICATED_USER_NAME, // 에러 발생하면 RestControllerAdvice에서 처리
-                            String.format("해당 userName %s 는 이미 있습니다.",request.getUserName()));
-                });
+                .ifPresent(user->{
+                    throw new AppException(ErrorCode.DUPLICATED_USER_NAME);
+    });
 
-        // save + password encrypt
-        UserEntity savedUser = userRepository.save(request.toEntity(encoder.encode(request.getPassword())));
-        return UserDto.builder()
-                .userName(savedUser.getUserName())
-                .password(savedUser.getPassword())
-                .build();
+        // 회원가입 .save()
+        User savedUser = userRepository.save(request.toEntity(encoder.encode(request.getPassword())));
+        return savedUser.toDto();
     }
 
-    public String login(String userName, String password){
-        UserEntity selectedUser = userRepository.findByUserName(userName)
-                .orElseThrow(()->new AppException(ErrorCode.USERNAME_NOT_FOUND, userName+"이 없습니다."));
-        if(!encoder.matches(password, selectedUser.getPassword())) {
-            throw new AppException(ErrorCode.INVALID_PASSWORD, password+"가 틀렸습니다.");
+    public String login(String userName, String password) {
+        // userName 존재 여부 확인
+        // 없다면 NOT-FOUND 에러
+        User user = userRepository.findByUserName(userName)
+                .orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND));
+
+
+        // password 일치 여부 확인
+        if(!encoder.matches(password, user.getPassword())){
+            throw new AppException(INVALID_PASSWORD);
         }
-        String token = JwtTokenUtil.createToken(selectedUser.getUserName(), key, expiredTime);
-        return token;
+        // 두 가지 확인 도중 예외가 안났다면 token 발행
+        return JwtTokenUtil.createToken(userName,secretKey,expireTimeMs);
     }
-
 }
