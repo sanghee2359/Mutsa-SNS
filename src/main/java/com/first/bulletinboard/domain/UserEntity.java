@@ -14,7 +14,7 @@ import java.sql.Timestamp;
 @Setter
 public class UserEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String password;
     private String userName;

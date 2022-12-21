@@ -17,7 +17,7 @@ public class UserService {
     public UserDto join(UserJoinRequest request) {
         userRepository.findByUserName(request.getUserName())
                 .ifPresent(user->{ // userName 중복 체크
-                    throw new AppException(ErrorCode.DUPLICATED_USER_NAME,
+                    throw new AppException(ErrorCode.DUPLICATED_USER_NAME, // 에러 발생하면 RestControllerAdvice에서 처리
                             String.format("해당 userName %s 는 이미 있습니다.",request.getUserName()));
                 });
 
@@ -28,4 +28,5 @@ public class UserService {
                 .password(savedUser.getPassword())
                 .build();
     }
+
 }
