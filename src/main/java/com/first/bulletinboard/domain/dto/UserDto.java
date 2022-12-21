@@ -10,6 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 public class UserDto { // 변환을 위한 dto
+    private Long id;
     private String userName;
     private String password;
+    private UserRole role;
+
 }
