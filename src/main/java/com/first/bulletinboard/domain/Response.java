@@ -12,7 +12,10 @@ public class Response<T> {
     public static <T> Response<T> success(T result){
         return new Response("SUCCESS",result);
     }
-    public static Response<Void> error(String resultCode) {
-        return new Response<>(resultCode, null);
+    public static Response<Void> success(){
+        return new Response("SUCCESS",null);
+    }
+    public static <T> Response<T> error(String resultCode, T result) {
+        return new Response<>(resultCode, result);
     }
 }
