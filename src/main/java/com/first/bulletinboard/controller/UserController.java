@@ -1,9 +1,7 @@
 package com.first.bulletinboard.controller;
 
 import com.first.bulletinboard.domain.Response;
-import com.first.bulletinboard.domain.dto.UserDto;
-import com.first.bulletinboard.domain.dto.UserJoinRequest;
-import com.first.bulletinboard.domain.dto.UserJoinResponse;
+import com.first.bulletinboard.domain.dto.*;
 import com.first.bulletinboard.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,5 +18,10 @@ public class UserController {
     public Response<UserJoinResponse> join(@RequestBody UserJoinRequest userJoinRequest) {
         UserDto userDto = userService.join(userJoinRequest);
         return Response.success(new UserJoinResponse(userDto.getUserName(),userDto.getPassword()));
+    }
+    @PostMapping("/join")
+    public Response<UserLoginResponse> login(@RequestBody UserLoginRequest userLoginRequest) {
+        String token = userService.login();
+        return Response.success(new UserLoginResponse(token));
     }
 }

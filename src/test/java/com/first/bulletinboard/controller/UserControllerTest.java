@@ -1,8 +1,10 @@
 package com.first.bulletinboard.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.first.bulletinboard.domain.dto.UserDto;
 import com.first.bulletinboard.domain.dto.UserJoinRequest;
+import com.first.bulletinboard.domain.dto.UserLoginRequest;
 import com.first.bulletinboard.exception.AppException;
 import com.first.bulletinboard.exception.ErrorCode;
 import com.first.bulletinboard.service.UserService;
@@ -14,6 +16,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -59,4 +62,52 @@ class UserControllerTest {
                 .andDo(print())
                 .andExpect(status().isConflict());
     }
+
+    @Test
+    @DisplayName("로그인 success")
+    void login_success() throws Exception {
+        String userName = "sanghee";
+        String password = "13579";
+        // 무엇을 보내서 : name, pw
+        when(userService.login(any(), any())).thenReturn("token");
+        // 무엇을 받을까? : USERNAME_NOT_FOUND
+        mockMvc.perform(post("/api/v1/login")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(new UserLoginRequest(userName,password))))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+    @Test
+    @DisplayName("로그인 _ username이 없음")
+    void login_id_fail() throws Exception {
+        String userName = "sanghee";
+        String password = "13579";
+        // 무엇을 보내서 : name, pw
+        when(userService.login(any(), any())).thenThrow(new AppException(ErrorCode.USERNAME_NOT_FOUND, ""));
+        // 무엇을 받을까? : USERNAME_NOT_FOUND
+        mockMvc.perform(post("/api/v1/login")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(new UserLoginRequest(userName,password))))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("로그인 _ password가 틀림")
+    void login_password_fail() throws Exception {
+        String userName = "sanghee";
+        String password = "13579";
+        // 무엇을 보내서 : name, pw
+        when(userService.login(any(), any())).thenThrow(new AppException(ErrorCode.INVALID_PASSWORD, ""));
+        // 무엇을 받을까? : INVALID_PASSWORD
+        mockMvc.perform(post("/api/v1/login")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(new UserLoginRequest(userName,password))))
+                .andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
 }
