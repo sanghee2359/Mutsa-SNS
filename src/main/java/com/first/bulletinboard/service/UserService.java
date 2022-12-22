@@ -1,6 +1,6 @@
 package com.first.bulletinboard.service;
 
-import com.first.bulletinboard.domain.User;
+import com.first.bulletinboard.domain.entity.User;
 import com.first.bulletinboard.domain.dto.UserDto;
 import com.first.bulletinboard.domain.dto.UserJoinRequest;
 import com.first.bulletinboard.exception.AppException;
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.first.bulletinboard.exception.ErrorCode.INVALID_PASSWORD;
-import static com.first.bulletinboard.exception.ErrorCode.USERNAME_NOT_FOUND;
 
 
 @Service

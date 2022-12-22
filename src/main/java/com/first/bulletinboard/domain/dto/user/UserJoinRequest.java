@@ -1,6 +1,6 @@
 package com.first.bulletinboard.domain.dto;
 
-import com.first.bulletinboard.domain.User;
+import com.first.bulletinboard.domain.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

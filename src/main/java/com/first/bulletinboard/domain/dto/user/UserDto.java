@@ -4,11 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-@AllArgsConstructor
+
 @Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
-public class UserJoinResponse {
-    private Long userId;
+public class UserDto { // 변환을 위한 dto
+    private int id;
     private String userName;
+    private String password;
+    private UserRole role;
+
 }
