@@ -1,13 +1,10 @@
 package com.first.bulletinboard.domain.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.first.bulletinboard.domain.dto.UserDto;
-import com.first.bulletinboard.domain.dto.UserRole;
-import com.first.bulletinboard.domain.entity.Post;
+import com.first.bulletinboard.domain.dto.user.UserDto;
+import com.first.bulletinboard.domain.dto.user.UserRole;
 import lombok.*;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

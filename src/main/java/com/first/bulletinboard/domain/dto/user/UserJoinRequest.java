@@ -1,4 +1,4 @@
-package com.first.bulletinboard.domain.dto;
+package com.first.bulletinboard.domain.dto.user;
 
 import com.first.bulletinboard.domain.entity.User;
 import lombok.AllArgsConstructor;

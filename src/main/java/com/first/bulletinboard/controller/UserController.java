@@ -1,7 +1,7 @@
 package com.first.bulletinboard.controller;
 
 import com.first.bulletinboard.domain.Response;
-import com.first.bulletinboard.domain.dto.*;
+import com.first.bulletinboard.domain.dto.user.*;
 import com.first.bulletinboard.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

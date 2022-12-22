@@ -1,8 +1,8 @@
 package com.first.bulletinboard.service;
 
 import com.first.bulletinboard.domain.entity.User;
-import com.first.bulletinboard.domain.dto.UserDto;
-import com.first.bulletinboard.domain.dto.UserJoinRequest;
+import com.first.bulletinboard.domain.dto.user.UserDto;
+import com.first.bulletinboard.domain.dto.user.UserJoinRequest;
 import com.first.bulletinboard.exception.AppException;
 import com.first.bulletinboard.exception.ErrorCode;
 import com.first.bulletinboard.repository.UserRepository;

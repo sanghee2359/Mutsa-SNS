@@ -1,10 +1,9 @@
 package com.first.bulletinboard.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.first.bulletinboard.domain.dto.UserDto;
-import com.first.bulletinboard.domain.dto.UserJoinRequest;
-import com.first.bulletinboard.domain.dto.UserLoginRequest;
+import com.first.bulletinboard.domain.dto.user.UserDto;
+import com.first.bulletinboard.domain.dto.user.UserJoinRequest;
+import com.first.bulletinboard.domain.dto.user.UserLoginRequest;
 import com.first.bulletinboard.exception.AppException;
 import com.first.bulletinboard.exception.ErrorCode;
 import com.first.bulletinboard.service.UserService;
