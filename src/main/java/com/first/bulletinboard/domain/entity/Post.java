@@ -1,11 +1,11 @@
 package com.first.bulletinboard.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.first.bulletinboard.domain.dto.post.PostDto;
+import com.first.bulletinboard.domain.dto.user.UserDto;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Builder
@@ -22,7 +22,17 @@ public class Post extends BaseEntity {
     private String title;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name="user_id")
     private User user;
+
+    public PostDto toPostDto() {
+        return PostDto.builder()
+                .id(this.id)
+                .user(user)
+                .body(this.body)
+                .title(this.title)
+                .build();
+    }
 
 }

@@ -4,6 +4,7 @@ import com.first.bulletinboard.domain.Response;
 import com.first.bulletinboard.domain.dto.user.*;
 import com.first.bulletinboard.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
 public class UserController {
@@ -19,6 +21,7 @@ public class UserController {
     @PostMapping("/join")
     public Response<UserJoinResponse> join(@RequestBody UserJoinRequest userJoinRequest) {
         UserDto userDto = userService.join(userJoinRequest);
+        log.info("userResponse:{}", new UserJoinResponse(userDto.getId(), userDto.getUserName()));
         return Response.success(new UserJoinResponse(userDto.getId(), userDto.getUserName()));
     }
     @PostMapping("/login")
