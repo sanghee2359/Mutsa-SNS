@@ -41,11 +41,12 @@ public class User {
     private List<Post> posts = new ArrayList<>();
 
 
-    public UserDto toDto() {
+    public UserDto toUserDto() {
         return UserDto.builder()
                 .id(this.id)
                 .userName(this.userName)
                 .password(this.password)
+                .role(this.role)
                 .build();
     }
 }

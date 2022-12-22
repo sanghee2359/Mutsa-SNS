@@ -39,7 +39,7 @@ public class UserService {
 
         // 회원가입 .save()
         User savedUser = userRepository.save(request.toEntity(encoder.encode(request.getPassword())));
-        return savedUser.toDto();
+        return savedUser.toUserDto();
     }
 
     public String login(String userName, String password) {
