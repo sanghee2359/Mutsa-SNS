@@ -18,9 +18,10 @@ public class PostController {
     private final PostService postService;
     // post 등록
     @PostMapping("/posts")
-    public Response<PostCreateResponse> createPost(@RequestBody PostCreateRequest postCreateRequest, Authentication authentication) {
+    public String createPost(@RequestBody PostCreateRequest postCreateRequest, Authentication authentication) {
         PostDto postDto = postService.create(postCreateRequest, authentication.getName());
 
-        return Response.success(new PostCreateResponse("포스트 등록 완료",postDto.getId()));
+        Response.success(new PostCreateResponse("포스트 등록 완료",postDto.getId()));
+        return "포스트 등록이 완료되었습니다.";
     }
 }
