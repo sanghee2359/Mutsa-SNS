@@ -28,7 +28,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         final String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-
         if(authorization == null || !authorization.startsWith("Bearar ")) {
             log.info("authorization을 잘못 보냈습니다.");
             filterChain.doFilter(request, response);
@@ -43,7 +42,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         }
 
         // username 꺼내기
-        String userName = "";
+        String userName = JwtTokenUtil.getUserName(token, secretKey);
+        log.info("userName:{}", userName);
 
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(userName,null, List.of(new SimpleGrantedAuthority("USER")));

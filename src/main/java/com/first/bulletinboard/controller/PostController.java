@@ -4,8 +4,6 @@ import com.first.bulletinboard.domain.Response;
 import com.first.bulletinboard.domain.dto.post.PostCreateRequest;
 import com.first.bulletinboard.domain.dto.post.PostCreateResponse;
 import com.first.bulletinboard.domain.dto.post.PostDto;
-import com.first.bulletinboard.domain.dto.user.UserDto;
-import com.first.bulletinboard.domain.dto.user.UserJoinResponse;
 import com.first.bulletinboard.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -18,10 +16,9 @@ public class PostController {
     private final PostService postService;
     // post 등록
     @PostMapping("/posts")
-    public String createPost(@RequestBody PostCreateRequest postCreateRequest, Authentication authentication) {
+    public Response<PostCreateResponse> createPost(@RequestBody PostCreateRequest postCreateRequest, Authentication authentication) {
         PostDto postDto = postService.create(postCreateRequest, authentication.getName());
 
-        Response.success(new PostCreateResponse("포스트 등록 완료",postDto.getId()));
-        return "포스트 등록이 완료되었습니다.";
+        return Response.success(new PostCreateResponse("포스트 등록 완료",postDto.getId()));
     }
 }
