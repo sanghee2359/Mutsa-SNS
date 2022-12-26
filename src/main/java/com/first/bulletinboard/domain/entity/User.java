@@ -3,6 +3,9 @@ package com.first.bulletinboard.domain.entity;
 import com.first.bulletinboard.domain.dto.user.UserDto;
 import com.first.bulletinboard.domain.dto.user.UserRole;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +22,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+@EntityListeners(AuditingEntityListener.class)
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,9 +31,16 @@ public class User implements UserDetails {
     @Column(unique = true)
     private String userName;
     private String password;
-    private LocalDateTime removedAt;
-    private LocalDateTime registerdAt; // 가입한 시간
+
+    @CreatedDate
+    @Column(nullable = false)
+    private LocalDateTime registeredAt; // 가입한 시간
+
+    @LastModifiedDate
+    @Column(nullable = false)
     private LocalDateTime updatedAt;
+    private LocalDateTime removedAt;
+
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
