@@ -12,7 +12,9 @@ import com.first.bulletinboard.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -39,7 +41,9 @@ public class PostService {
 
     // list 조회
     public Page<PostReadResponse> findAllPost(Pageable pageable) {
-         return postRepository.findAll(pageable).map(PostReadResponse::fromEntity);
+
+        PageRequest pageRequest = PageRequest.of(0, 20, Sort.by("createdAt").descending());
+        return postRepository.findAll(pageRequest).map(PostReadResponse::fromEntity);
     }
     /*public List<PostReadResponse> findAll (Pageable pageable) {
         Page<Post> posts = postRepository.findAll(pageable);

@@ -3,6 +3,8 @@ package com.first.bulletinboard.controller;
 import com.first.bulletinboard.domain.Response;
 import com.first.bulletinboard.domain.dto.post.*;
 import com.first.bulletinboard.domain.entity.Post;
+import com.first.bulletinboard.exception.AppException;
+import com.first.bulletinboard.exception.ErrorCode;
 import com.first.bulletinboard.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -34,9 +36,9 @@ public class PostController {
 
     }*/
     @GetMapping
-    public Response<Page<PostReadResponse>> list(@PageableDefault(size = 20, sort = "createdAt",
-            direction = Sort.Direction.DESC) Pageable pageable){
+    public Response<Page<PostReadResponse>> list(Pageable pageable){
         Page<PostReadResponse> posts = postService.findAllPost(pageable);
+        if(posts.isEmpty()) throw new AppException(ErrorCode.POST_NOT_FOUND);
         return Response.success(posts);
     }
 
