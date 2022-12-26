@@ -29,6 +29,7 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/swagger-ui/**").permitAll()
                 .antMatchers("/api/v1/users/join", "/api/v1/users/login").permitAll() // join, login은 언제나 가능
+                .antMatchers(HttpMethod.GET, "/api/v1/posts/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/v1/posts/**").permitAll() // antMacher 순서대로 우선순위가 됨
                 .and()
                 .sessionManagement()
