@@ -15,12 +15,4 @@ public class PostCreateRequest {
     private String title;
     private String body;
 
-    public Post toEntity(User user) {
-        return Post.builder()
-                .id(user.getId())
-                .user(user)
-                .title(this.title)
-                .body(this.body)
-                .build();
-    }
 }
