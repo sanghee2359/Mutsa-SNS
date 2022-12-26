@@ -2,7 +2,7 @@ package com.first.bulletinboard.service;
 
 import com.first.bulletinboard.domain.dto.post.PostCreateRequest;
 import com.first.bulletinboard.domain.dto.post.PostDto;
-import com.first.bulletinboard.domain.dto.post.PostReadListResponse;
+import com.first.bulletinboard.domain.dto.post.PostReadResponse;
 import com.first.bulletinboard.domain.entity.Post;
 import com.first.bulletinboard.domain.entity.User;
 import com.first.bulletinboard.exception.AppException;
@@ -13,9 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,9 +38,15 @@ public class PostService {
     }*/
 
     // list 조회
-    public Page<Post> findAll(Pageable pageable) {
-         return postRepository.findAll(pageable);
+    public Page<PostReadResponse> findAllPost(Pageable pageable) {
+         return postRepository.findAll(pageable).map(PostReadResponse::fromEntity);
     }
+    /*public List<PostReadResponse> findAll (Pageable pageable) {
+        Page<Post> posts = postRepository.findAll(pageable);
+        List<PostReadResponse> postDtoList = posts.stream()
+                .map(PostReadResponse::fromEntity).collect(Collectors.toList());
+        return postDtoList;
+    }*/
 
     // postId로 검색
     public Post findById(int id) {
@@ -52,6 +56,7 @@ public class PostService {
                 });
         return post;
     }
+
     // post 생성
     public PostDto create(PostCreateRequest request, String userName) {
         User user = userRepository.findByUserName(userName)
@@ -66,6 +71,7 @@ public class PostService {
 
         Post savedPost = postRepository.save(post);
         log.info("postId:{}",post.getId());
+        log.info("userName:{}",user.getUsername());
         return savedPost.toPostDto();
     }
 }

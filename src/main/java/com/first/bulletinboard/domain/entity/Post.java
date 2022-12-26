@@ -2,6 +2,7 @@ package com.first.bulletinboard.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.first.bulletinboard.domain.dto.post.PostDto;
+import com.first.bulletinboard.domain.dto.post.PostReadResponse;
 import lombok.*;
 
 import javax.persistence.*;
@@ -21,11 +22,10 @@ public class Post extends BaseEntity {
     private String title;
     private String body;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JsonIgnore
     @JoinColumn(name="user_id")
     private User user;
-
 
     public PostDto toPostDto() {
         return PostDto.builder()
@@ -37,9 +37,9 @@ public class Post extends BaseEntity {
                 .build();
     }
 
-/*    public PostReadResponse toResponse() {
+    /*public PostReadResponse toResponse() { // List -> user을 사용해서 그런지 registered가 없다고 뜸
         return PostReadResponse.builder()
-                .id(this.postId)
+                .id(this.id)
                 .title(this.title)
                 .body(this.body)
                 .userName(user.getUsername())
