@@ -2,7 +2,6 @@ package com.first.bulletinboard.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.first.bulletinboard.domain.dto.post.PostDto;
-import com.first.bulletinboard.domain.dto.user.UserDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -18,8 +17,8 @@ public class Post extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String body;
     private String title;
+    private String body;
 
     @ManyToOne
     @JsonIgnore
@@ -34,5 +33,4 @@ public class Post extends BaseEntity {
                 .title(this.title)
                 .build();
     }
-
 }

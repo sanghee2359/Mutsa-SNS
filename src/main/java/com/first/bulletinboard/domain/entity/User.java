@@ -55,6 +55,7 @@ public class User implements UserDetails {
                 .build();
     }
 
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         ArrayList<GrantedAuthority> auth = new ArrayList<GrantedAuthority>();
