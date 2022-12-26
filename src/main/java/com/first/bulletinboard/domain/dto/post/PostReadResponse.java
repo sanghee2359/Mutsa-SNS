@@ -1,5 +1,6 @@
 package com.first.bulletinboard.domain.dto.post;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.first.bulletinboard.domain.entity.Post;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,7 +18,9 @@ public class PostReadResponse {
     private String title;
     private String body;
     private String userName;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastModifiedAt;
     public static PostReadResponse fromEntity(Post post) {
         PostReadResponse response = PostReadResponse.builder()
