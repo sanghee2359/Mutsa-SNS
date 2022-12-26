@@ -28,7 +28,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         final String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        if(authorization == null || !authorization.startsWith("Bearar ")) {
+        if(authorization == null || !authorization.startsWith("Bearer ")) {
             log.info("authorization을 잘못 보냈습니다.");
             filterChain.doFilter(request, response);
             return;
