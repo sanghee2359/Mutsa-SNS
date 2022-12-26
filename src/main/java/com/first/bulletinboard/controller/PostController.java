@@ -6,9 +6,7 @@ import com.first.bulletinboard.domain.entity.Post;
 import com.first.bulletinboard.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,46 +25,20 @@ public class PostController {
     }
 
     // list 출력
-    /*@GetMapping("/posts")
-    public Response<ResponseEntity<PostReadListResponse>> list(@RequestBody  Pageable pageable) {
-        pageable = PageRequest.ofSize(20);
-        List<PostReadListResponse> posts = postService.getPostList(pageable);
-        // dto로 매핑하는 로직 -> controller에서 하기
-//        VisitResponse visitResponse = Visit.toResponse();
-        return Response.success(new ResponseEntity<>(posts));
+    @GetMapping("/posts")
+    public Response<Page<Post>> list(Pageable pageable) {
 
-    }*/
+        Page<Post> posts = postService.findAll(pageable);
+        return Response.success(posts);
 
-   /* <PostReadOneResponse>> list(@RequestBody Pageable pageable) {
-        List<PostReadListResponse> posts = postService.getPostList(pageable);
+    }
 
-        return Response.success(pageable);
-    }*/
-    //public Page<YourEntityHere> readPageable(@NotNull final Pageable pageable) {
-    //    return someService.search(pageable);
-    //}
-/*public ResponseEntity<List<CommentDTO>> getComments(
-           @RequestParam(defaultValue = "5", required = false)
-                  Integer pageSize,
-           @RequestParam(defaultValue = "0", required = false)
-                  Integer page
-    ) throws Exception {
 
-        Pageable paging  = PageRequest.of(page, pageSize);
-
-        List<CommentDTO> commentsDTO =
-              commentService.getAllComments(paging);
-
-        return new ResponseEntity<>(
-              commentsDTO, HttpStatus.CREATED);
-    }*/
-    // id로 post 조회
-    @GetMapping("/posts/{id}")
-    public Response<PostReadOneResponse> FindById(@PathVariable int id) {
-        Post post = postService.getPost(id);
-        PostReadOneResponse reponse = new PostReadOneResponse(post.getId(),
-                post.getTitle(),post.getBody(),post.getUser().getUsername(),
-                post.getCreatedAt(), post.getLastModifiedAt());
-        return Response.success(reponse);
+    // post id로 post 조회 -> error 수정
+    @GetMapping("/posts/{postId}")
+    public Response<PostReadResponse> FindById(@PathVariable int postId) {
+        Post post = postService.findById(postId);
+        PostReadResponse response = PostReadResponse.fromEntity(post);
+        return Response.success(response);
     }
 }

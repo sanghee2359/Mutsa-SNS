@@ -16,6 +16,7 @@ import javax.persistence.*;
 public class Post extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "post_id")
     private int id;
     private String title;
     private String body;
@@ -25,12 +26,25 @@ public class Post extends BaseEntity {
     @JoinColumn(name="user_id")
     private User user;
 
+
     public PostDto toPostDto() {
         return PostDto.builder()
                 .id(this.id)
-                .user(user)
-                .body(this.body)
                 .title(this.title)
+                .body(this.body)
+                .createdAt(getCreatedAt())
+                .lastModifiedAt(getLastModifiedAt())
                 .build();
     }
+
+/*    public PostReadResponse toResponse() {
+        return PostReadResponse.builder()
+                .id(this.postId)
+                .title(this.title)
+                .body(this.body)
+                .userName(user.getUsername())
+                .createdAt(getCreatedAt())
+                .lastModifiedAt(getLastModifiedAt())
+                .build();
+    }*/
 }

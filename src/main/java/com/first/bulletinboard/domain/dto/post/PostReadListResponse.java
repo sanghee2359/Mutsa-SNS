@@ -1,23 +1,26 @@
 package com.first.bulletinboard.domain.dto.post;
 
+import com.first.bulletinboard.domain.entity.Post;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 public class PostReadListResponse {
-    private int id;
-    private String title;
-    private String body;
-    private String userName;
-    private LocalDateTime createdAt;
-    private LocalDateTime lastModifiedAt;
-    private Page<PostReadOneResponse> content;
+    private Page<Post> posts;
+    /*public static List<PostReadResponse> fromEntity(Post post) {
+        List<PostReadResponse> postList = new ArrayList<>();
+        for (Post x : post.getUser().getPosts()) {
+            postList.add(PostReadResponse.fromEntity(x));
+        }
+        return postList;
+    }*/
 }
