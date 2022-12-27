@@ -27,6 +27,9 @@ import java.util.stream.Collectors;
 public class PostService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+
+
+
     // post 업데이트
     @Transactional
     public int updateById(int postId, PostUpdateRequest request, String userName) {

@@ -38,12 +38,6 @@ public class PostController {
     }
 
     // list 출력
-    /*@GetMapping("/posts")
-    public Response<Page<Post>> list(Pageable pageable) {
-        Page<Post> posts = postService.findAll(pageable);
-        return Response.success(posts);
-
-    }*/
     @GetMapping
     public Response<Page<PostReadResponse>> list(){
         Page<PostReadResponse> posts = postService.findAllPost();
@@ -52,10 +46,10 @@ public class PostController {
     }
 
 
-    // post id로 post 조회 -> error 수정
-    @GetMapping("/{postId}")
-    public Response<PostReadResponse> FindById(@PathVariable int postId) {
-        Post post = postService.findById(postId);
+    // postId로 post 상세 출력
+    @GetMapping("/{id}")
+    public Response<PostReadResponse> FindById(@PathVariable int id) {
+        Post post = postService.findById(id);
         PostReadResponse response = PostReadResponse.fromEntity(post);
         return Response.success(response);
     }
