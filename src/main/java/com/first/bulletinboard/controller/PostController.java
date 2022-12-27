@@ -8,25 +8,26 @@ import com.first.bulletinboard.exception.ErrorCode;
 import com.first.bulletinboard.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/posts")
 @RequiredArgsConstructor
 public class PostController {
     private final PostService postService;
+    // post 삭제
+    @DeleteMapping("/{id}")
+    public Response<PostDeleteResponse> deletePost(@PathVariable int id, Authentication authentication) {
+        int deletePostId = postService.deleteById(id, authentication.getName());
+        return Response.success(new PostDeleteResponse("포스트 삭제 완료",deletePostId));
+    }
     // post 수정
-    @PutMapping("/{postId}")
-    public Response<PostUpdateResponse> updatePost(@PathVariable int postId
+    @PutMapping("/{id}")
+    public Response<PostUpdateResponse> updatePost(@PathVariable int id
             , @RequestBody PostUpdateRequest postUpdateRequest, Authentication authentication) {
 
-        int updatePostId = postService.updateById(postId, postUpdateRequest, authentication.getName());
+        int updatePostId = postService.updateById(id, postUpdateRequest, authentication.getName());
         return Response.success(new PostUpdateResponse("포스트 수정 완료", updatePostId));
     }
     // post 등록
@@ -44,8 +45,8 @@ public class PostController {
 
     }*/
     @GetMapping
-    public Response<Page<PostReadResponse>> list(Pageable pageable){
-        Page<PostReadResponse> posts = postService.findAllPost(pageable);
+    public Response<Page<PostReadResponse>> list(){
+        Page<PostReadResponse> posts = postService.findAllPost();
         if(posts.isEmpty()) throw new AppException(ErrorCode.POST_NOT_FOUND);
         return Response.success(posts);
     }

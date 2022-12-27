@@ -2,7 +2,7 @@ package com.first.bulletinboard.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.first.bulletinboard.domain.dto.post.PostDto;
-import com.first.bulletinboard.domain.dto.post.PostReadResponse;
+import com.first.bulletinboard.domain.dto.post.PostUpdateRequest;
 import lombok.*;
 
 import javax.persistence.*;
@@ -36,8 +36,8 @@ public class Post extends BaseEntity {
                 .lastModifiedAt(getLastModifiedAt())
                 .build();
     }
-    public void update(Post post){
-        this.title = post.getTitle();
-        this.body = post.getBody();
+    public void modify(Post request) {
+        this.title = request.getTitle();
+        this.body = request.getBody();
     }
 }
