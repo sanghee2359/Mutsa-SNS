@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,46 +22,55 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 @Slf4j
 public class PostService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
-
-    // postId로 post 삭제
-    /*@Transactional
-    public int deleteById(int postId, Authentication authentication) {
-        postRepository.deleteById(postId);
-    }*/
-
     // post 업데이트
     @Transactional
-    public int updateById(int id, PostUpdateRequest request, String userName) {
+    public int updateById(int postId, PostUpdateRequest request, String userName) {
         User user = userRepository.findByUserName(userName)
                 .orElseThrow(()-> {
                     throw new AppException(ErrorCode.USERNAME_NOT_FOUND);
                 });
-        Post post = postRepository.findById(id)
+        Post updatePost = postRepository.findById(postId)
+                .orElseThrow(()-> {
+                    throw new AppException(ErrorCode.POST_NOT_FOUND);
+                });
+        if(updatePost.getUser().getId() != user.getId()) throw new AppException(ErrorCode.INVALID_PERMISSION);
+
+        // request title,body 주입
+        updatePost.modify(request.toEntity());
+        log.info("update Title:{}",updatePost.getTitle());
+        return updatePost.getId();
+    }
+
+    // postId로 post 삭제
+    @Transactional
+    public int deleteById(int postId, String userName) {
+        User user = userRepository.findByUserName(userName)
+                .orElseThrow(()-> {
+                    throw new AppException(ErrorCode.USERNAME_NOT_FOUND);
+                });
+        Post post = postRepository.findById(postId)
                 .orElseThrow(()-> {
                     throw new AppException(ErrorCode.POST_NOT_FOUND);
                 });
         if(post.getUser().getId() != user.getId()) throw new AppException(ErrorCode.INVALID_PERMISSION);
-        post.update(request.toEntity());
+        postRepository.delete(post);
         return post.getId();
     }
 
 
+
         // list 조회
-    public Page<PostReadResponse> findAllPost(Pageable pageable) {
+    public Page<PostReadResponse> findAllPost() {
 
         PageRequest pageRequest = PageRequest.of(0, 20, Sort.by("createdAt").descending());
         return postRepository.findAll(pageRequest).map(PostReadResponse::fromEntity);
     }
-    /*public List<PostReadResponse> findAll (Pageable pageable) {
-        Page<Post> posts = postRepository.findAll(pageable);
-        List<PostReadResponse> postDtoList = posts.stream()
-                .map(PostReadResponse::fromEntity).collect(Collectors.toList());
-        return postDtoList;
-    }*/
+
 
     // postId로 조회
     public Post findById(int id) {

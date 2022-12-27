@@ -1,7 +1,6 @@
 package com.first.bulletinboard.domain.entity;
 
 import com.first.bulletinboard.domain.dto.user.UserDto;
-import com.first.bulletinboard.domain.dto.user.UserRole;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -42,7 +41,7 @@ public class User implements UserDetails {
     private LocalDateTime removedAt;
 
     @Enumerated(EnumType.STRING)
-    private UserRole role;
+    private UserRole role = UserRole.USER;
 
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
