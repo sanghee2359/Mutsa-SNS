@@ -36,15 +36,8 @@ public class Post extends BaseEntity {
                 .lastModifiedAt(getLastModifiedAt())
                 .build();
     }
-
-    /*public PostReadResponse toResponse() { // List -> user을 사용해서 그런지 registered가 없다고 뜸
-        return PostReadResponse.builder()
-                .id(this.id)
-                .title(this.title)
-                .body(this.body)
-                .userName(user.getUsername())
-                .createdAt(getCreatedAt())
-                .lastModifiedAt(getLastModifiedAt())
-                .build();
-    }*/
+    public void update(Post post){
+        this.title = post.getTitle();
+        this.body = post.getBody();
+    }
 }

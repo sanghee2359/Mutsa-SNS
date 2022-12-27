@@ -21,6 +21,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostController {
     private final PostService postService;
+    // post 수정
+    @PutMapping("/{postId}")
+    public Response<PostUpdateResponse> updatePost(@PathVariable int postId
+            , @RequestBody PostUpdateRequest postUpdateRequest, Authentication authentication) {
+
+        int updatePostId = postService.updateById(postId, postUpdateRequest, authentication.getName());
+        return Response.success(new PostUpdateResponse("포스트 수정 완료", updatePostId));
+    }
     // post 등록
     @PostMapping
     public Response<PostCreateResponse> createPost(@RequestBody PostCreateRequest postCreateRequest, Authentication authentication) {

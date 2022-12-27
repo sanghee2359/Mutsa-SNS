@@ -1,8 +1,6 @@
 package com.first.bulletinboard.service;
 
-import com.first.bulletinboard.domain.dto.post.PostCreateRequest;
-import com.first.bulletinboard.domain.dto.post.PostDto;
-import com.first.bulletinboard.domain.dto.post.PostReadResponse;
+import com.first.bulletinboard.domain.dto.post.*;
 import com.first.bulletinboard.domain.entity.Post;
 import com.first.bulletinboard.domain.entity.User;
 import com.first.bulletinboard.exception.AppException;
@@ -16,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,12 +33,23 @@ public class PostService {
     }*/
 
     // post 업데이트
-    /*@Transactional
-    public PostDto updateById(int postId, Authentication authentication) {
+    @Transactional
+    public int updateById(int id, PostUpdateRequest request, String userName) {
+        User user = userRepository.findByUserName(userName)
+                .orElseThrow(()-> {
+                    throw new AppException(ErrorCode.USERNAME_NOT_FOUND);
+                });
+        Post post = postRepository.findById(id)
+                .orElseThrow(()-> {
+                    throw new AppException(ErrorCode.POST_NOT_FOUND);
+                });
+        if(post.getUser().getId() != user.getId()) throw new AppException(ErrorCode.INVALID_PERMISSION);
+        post.update(request.toEntity());
+        return post.getId();
+    }
 
-    }*/
 
-    // list 조회
+        // list 조회
     public Page<PostReadResponse> findAllPost(Pageable pageable) {
 
         PageRequest pageRequest = PageRequest.of(0, 20, Sort.by("createdAt").descending());
@@ -52,7 +62,7 @@ public class PostService {
         return postDtoList;
     }*/
 
-    // postId로 검색
+    // postId로 조회
     public Post findById(int id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(()-> {
@@ -67,14 +77,8 @@ public class PostService {
                 .orElseThrow(()-> {
                     throw new AppException(ErrorCode.USERNAME_NOT_FOUND);
                 });
-        Post post = Post.builder()
-                    .title(request.getTitle())
-                    .body(request.getBody())
-                    .user(user)
-                    .build();
-
-        Post savedPost = postRepository.save(post);
-        log.info("postId:{}",post.getId());
+        Post savedPost = postRepository.save(request.toEntity(user));
+        log.info("postId:{}",savedPost.getId());
         log.info("userName:{}",user.getUsername());
         return savedPost.toPostDto();
     }
