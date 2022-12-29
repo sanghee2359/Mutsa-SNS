@@ -7,6 +7,7 @@ import com.first.bulletinboard.exception.AppException;
 import com.first.bulletinboard.exception.ErrorCode;
 import com.first.bulletinboard.repository.PostRepository;
 import com.first.bulletinboard.repository.UserRepository;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

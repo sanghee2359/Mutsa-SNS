@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 @Api(tags = {"Test"})
@@ -17,5 +18,14 @@ public class HelloController {
     public ResponseEntity<String> hello() {
 //        log.info("crontab 실행여부 확인");
         return ResponseEntity.ok().body("정상희");
+    }
+    @GetMapping("/hello/{num}")
+    public ResponseEntity<Integer> SumOfDigit(@PathVariable int num){
+        int answer = 0;
+        while(num >0) {
+            answer += num%10;
+            num = num/10;
+        }
+        return ResponseEntity.ok().body(answer);
     }
 }

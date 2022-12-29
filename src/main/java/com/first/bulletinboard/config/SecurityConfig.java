@@ -30,7 +30,7 @@ public class SecurityConfig {
                 .antMatchers("/swagger-ui/**").permitAll()
                 .antMatchers("/api/v1/users/join", "/api/v1/users/login").permitAll() // join, login은 언제나 가능
                 .antMatchers(HttpMethod.GET, "/api/v1/posts/**").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/v1/posts/**").permitAll() // antMacher 순서대로 우선순위가 됨
+                .antMatchers(HttpMethod.POST, "/api/v1/posts/**").authenticated() // antMacher 순서대로 우선순위가 됨
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // jwt사용하는 경우 씀

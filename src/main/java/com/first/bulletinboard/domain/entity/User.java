@@ -40,16 +40,16 @@ public class User implements UserDetails {
     private LocalDateTime updatedAt;
     private LocalDateTime removedAt;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING) // string으로 저장
     private UserRole role = UserRole.USER;
 
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+ /*   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Post> comments = new ArrayList<>();
 
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<Post> likes = new ArrayList<>();
+    private List<Post> likes = new ArrayList<>();*/
 
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
