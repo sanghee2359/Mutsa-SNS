@@ -47,7 +47,7 @@ public class User implements UserDetails {
     private LocalDateTime removedAt;
 
     @Enumerated(EnumType.STRING) // string으로 저장
-    private UserRole role = UserRole.ROLE_USER;
+    private UserRole role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
     @Builder.Default
