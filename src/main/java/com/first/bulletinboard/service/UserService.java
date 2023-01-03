@@ -71,6 +71,6 @@ public class UserService implements UserDetailsService {
             throw new AppException(INVALID_PASSWORD);
         }
         // 두 가지 확인 도중 예외가 안났다면 token 발행
-        return JwtTokenUtil.createToken(userName,secretKey,expireTimeMs, user.getRole());
+        return JwtTokenUtil.createToken(userName,secretKey,expireTimeMs);
     }
 }
