@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -33,8 +34,15 @@ public class UserService implements UserDetailsService {
     // userDetails
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
-        UserDetails load = userRepository.findByUserName(username).orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND));
-        return load;
+        User user = userRepository.findByUserName(username)
+                .orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND));
+        return null;
+        /*List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+
+        if (Role.ADMIN.equals(member.getRoleType())) {
+            grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        }*/
     }
     @Transactional
     public UserDto join(UserJoinRequest request) {
@@ -63,6 +71,6 @@ public class UserService implements UserDetailsService {
             throw new AppException(INVALID_PASSWORD);
         }
         // 두 가지 확인 도중 예외가 안났다면 token 발행
-        return JwtTokenUtil.createToken(userName,secretKey,expireTimeMs);
+        return JwtTokenUtil.createToken(userName,secretKey,expireTimeMs, user.getRole());
     }
 }

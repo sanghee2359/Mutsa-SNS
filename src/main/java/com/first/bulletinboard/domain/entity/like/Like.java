@@ -27,9 +27,8 @@ public class Like extends BaseEntity {
     @JoinColumn(name="post_id")
     private Post post;
 
-    public Like(User user, Post post) {
+    public Like(User user, Post post) { // 생성자
         this.user = user;
         this.post = post;
     }
-
 }
