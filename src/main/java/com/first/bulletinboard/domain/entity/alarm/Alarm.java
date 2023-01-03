@@ -1,5 +1,7 @@
-package com.first.bulletinboard.domain.entity;
+package com.first.bulletinboard.domain.entity.alarm;
 
+import com.first.bulletinboard.domain.entity.BaseEntity;
+import com.first.bulletinboard.domain.entity.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,8 +23,8 @@ public class Alarm extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-//    @Enumerated(EnumType.STRING)
-//    private AlarmType alarmType; // like인지 comment인지
+    @Enumerated(EnumType.STRING)
+    private AlarmType alarmType; // like인지 comment인지
 
     private Integer fromUserId;
     private Integer targetId; // post.id
