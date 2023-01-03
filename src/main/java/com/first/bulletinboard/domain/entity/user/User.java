@@ -1,5 +1,6 @@
 package com.first.bulletinboard.domain.entity.user;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.first.bulletinboard.domain.dto.user.UserDto;
 import com.first.bulletinboard.domain.entity.comment.Comment;
 import com.first.bulletinboard.domain.entity.like.Like;
@@ -33,6 +34,7 @@ public class User implements UserDetails {
     private Integer id;
     @Column(unique = true)
     private String userName;
+    @Column(nullable = false)
     private String password;
 
     @CreatedDate
@@ -48,12 +50,15 @@ public class User implements UserDetails {
     private UserRole role = UserRole.ROLE_USER;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
+    @Builder.Default
     private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
+    @Builder.Default
     private List<Like> likes = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
+    @Builder.Default
     private List<Post> posts = new ArrayList<>();
 
 
@@ -69,7 +74,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        ArrayList<GrantedAuthority> auth = new ArrayList<GrantedAuthority>();
+        ArrayList<GrantedAuthority> auth = new ArrayList<>();
         auth.add(new SimpleGrantedAuthority(role.name()));
         return auth;
     }
@@ -89,11 +94,12 @@ public class User implements UserDetails {
         return true;
     }
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Override
     public boolean isEnabled() {
         return true;
