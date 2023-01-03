@@ -1,7 +1,6 @@
 package com.first.bulletinboard.service;
 
-import com.first.bulletinboard.domain.dto.post.PostReadResponse;
-import com.first.bulletinboard.domain.entity.User;
+import com.first.bulletinboard.domain.entity.user.User;
 import com.first.bulletinboard.domain.dto.user.UserDto;
 import com.first.bulletinboard.domain.dto.user.UserJoinRequest;
 import com.first.bulletinboard.exception.AppException;
@@ -25,7 +24,6 @@ import static com.first.bulletinboard.exception.ErrorCode.INVALID_PASSWORD;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;

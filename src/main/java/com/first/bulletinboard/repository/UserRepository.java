@@ -1,6 +1,6 @@
 package com.first.bulletinboard.repository;
 
-import com.first.bulletinboard.domain.entity.User;
+import com.first.bulletinboard.domain.entity.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

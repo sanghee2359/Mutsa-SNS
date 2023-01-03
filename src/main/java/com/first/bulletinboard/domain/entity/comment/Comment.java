@@ -1,7 +1,9 @@
-package com.first.bulletinboard.domain.entity;
+package com.first.bulletinboard.domain.entity.comment;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.first.bulletinboard.domain.dto.comment.CommentDto;
+import com.first.bulletinboard.domain.entity.BaseEntity;
+import com.first.bulletinboard.domain.entity.post.Post;
+import com.first.bulletinboard.domain.entity.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,7 +17,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Builder
 @Table(name = "comment")
-public class Comment extends BaseEntity{
+public class Comment extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

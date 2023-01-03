@@ -1,8 +1,6 @@
 package com.first.bulletinboard.domain.dto.comment;
 
-import com.first.bulletinboard.domain.dto.post.PostReadResponse;
-import com.first.bulletinboard.domain.entity.Comment;
-import com.first.bulletinboard.domain.entity.Post;
+import com.first.bulletinboard.domain.entity.comment.Comment;
 
 public class CommentReadResponse {
     public static CommentDto fromEntity(Comment comment) {

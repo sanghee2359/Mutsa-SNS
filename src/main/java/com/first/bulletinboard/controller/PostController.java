@@ -2,7 +2,7 @@ package com.first.bulletinboard.controller;
 
 import com.first.bulletinboard.domain.Response;
 import com.first.bulletinboard.domain.dto.post.*;
-import com.first.bulletinboard.domain.entity.Post;
+import com.first.bulletinboard.domain.entity.post.Post;
 import com.first.bulletinboard.exception.AppException;
 import com.first.bulletinboard.exception.ErrorCode;
 import com.first.bulletinboard.service.PostService;

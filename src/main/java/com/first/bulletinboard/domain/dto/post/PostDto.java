@@ -1,6 +1,6 @@
 package com.first.bulletinboard.domain.dto.post;
 
-import com.first.bulletinboard.domain.entity.User;
+import com.first.bulletinboard.domain.entity.user.User;
 import lombok.*;
 
 import java.time.LocalDateTime;

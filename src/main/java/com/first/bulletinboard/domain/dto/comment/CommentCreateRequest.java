@@ -1,8 +1,8 @@
 package com.first.bulletinboard.domain.dto.comment;
 
-import com.first.bulletinboard.domain.entity.Comment;
-import com.first.bulletinboard.domain.entity.Post;
-import com.first.bulletinboard.domain.entity.User;
+import com.first.bulletinboard.domain.entity.comment.Comment;
+import com.first.bulletinboard.domain.entity.post.Post;
+import com.first.bulletinboard.domain.entity.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

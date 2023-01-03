@@ -1,13 +1,17 @@
-package com.first.bulletinboard.domain.entity;
+package com.first.bulletinboard.domain.entity.post;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.first.bulletinboard.domain.dto.post.PostDto;
-import com.first.bulletinboard.domain.dto.post.PostUpdateRequest;
+import com.first.bulletinboard.domain.entity.BaseEntity;
+import com.first.bulletinboard.domain.entity.comment.Comment;
+import com.first.bulletinboard.domain.entity.like.Like;
+import com.first.bulletinboard.domain.entity.user.User;
 import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Builder
@@ -36,7 +40,7 @@ public class Post extends BaseEntity {
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST)
     @ToString.Exclude
-    private List<Like> likes = new ArrayList<>();
+    private Set<Like> likes = new HashSet<>();
 
 
     public PostDto toPostDto() {

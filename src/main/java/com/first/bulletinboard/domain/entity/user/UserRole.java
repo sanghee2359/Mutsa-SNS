@@ -1,4 +1,4 @@
-package com.first.bulletinboard.domain.entity;
+package com.first.bulletinboard.domain.entity.user;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
