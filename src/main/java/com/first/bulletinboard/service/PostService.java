@@ -51,7 +51,6 @@ public class PostService {
     }
 
     // postId로 post 삭제
-    @Transactional
     public int deleteById(int postId, String userName) {
         User user = userRepository.findByUserName(userName)
                 .orElseThrow(()-> {
@@ -95,5 +94,14 @@ public class PostService {
         log.info("postId:{}",savedPost.getId());
         log.info("userName:{}",user.getUsername());
         return savedPost.toPostDto();
+    }
+
+    public Page<PostReadResponse> findMyFeed(String userName) {
+        User user = userRepository.findByUserName(userName)
+                .orElseThrow(()-> {
+                    throw new AppException(ErrorCode.USERNAME_NOT_FOUND);
+                });
+        PageRequest pageRequest = PageRequest.of(0, 20, Sort.by("createdAt").descending());
+        return postRepository.findAllByUser(user, pageRequest).map(PostReadResponse::fromEntity);
     }
 }
