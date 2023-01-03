@@ -1,7 +1,7 @@
 package com.first.bulletinboard.domain.dto.post;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.first.bulletinboard.domain.entity.Post;
+import com.first.bulletinboard.domain.entity.post.Post;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

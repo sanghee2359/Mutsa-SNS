@@ -2,7 +2,7 @@ package com.first.bulletinboard.controller;
 
 import com.first.bulletinboard.domain.Response;
 import com.first.bulletinboard.domain.dto.post.*;
-import com.first.bulletinboard.domain.entity.Post;
+import com.first.bulletinboard.domain.entity.post.Post;
 import com.first.bulletinboard.exception.AppException;
 import com.first.bulletinboard.exception.ErrorCode;
 import com.first.bulletinboard.service.PostService;
@@ -48,9 +48,15 @@ public class PostController {
 
     // postId로 post 상세 출력
     @GetMapping("/{id}")
-    public Response<PostReadResponse> FindById(@PathVariable int id) {
+    public Response<PostReadResponse> findById(@PathVariable int id) {
         Post post = postService.findById(id);
         PostReadResponse response = PostReadResponse.fromEntity(post);
         return Response.success(response);
+    }
+    // my feed -> 유저의 피드 목록 필터링
+    @GetMapping("/my")
+    public Response<Page<PostReadResponse>> myFeed (Authentication authentication) {
+        Page<PostReadResponse> posts = postService.findMyFeed(authentication.getName());
+        return Response.success(posts);
     }
 }

@@ -1,6 +1,9 @@
-package com.first.bulletinboard.domain.entity;
+package com.first.bulletinboard.domain.entity.user;
 
 import com.first.bulletinboard.domain.dto.user.UserDto;
+import com.first.bulletinboard.domain.entity.comment.Comment;
+import com.first.bulletinboard.domain.entity.like.Like;
+import com.first.bulletinboard.domain.entity.post.Post;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -22,11 +25,12 @@ import java.util.List;
 @Getter
 @Setter
 @EntityListeners(AuditingEntityListener.class)
+@Table(name = "user")
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private int id;
+    private Integer id;
     @Column(unique = true)
     private String userName;
     private String password;
@@ -41,18 +45,15 @@ public class User implements UserDetails {
     private LocalDateTime removedAt;
 
     @Enumerated(EnumType.STRING) // string으로 저장
-    private UserRole role = UserRole.USER;
+    private UserRole role = UserRole.ROLE_USER;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
 
- /*   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<Post> comments = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<Like> likes = new ArrayList<>();
 
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<Post> likes = new ArrayList<>();*/
-
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Post> posts = new ArrayList<>();
 
 

@@ -9,26 +9,27 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
-@WebMvcTest
+@WebMvcTest(HelloController.class)
 class HelloControllerTest {
-    @Autowired
+    /*@Autowired
     MockMvc mockMvc;
     @MockBean
     AlgorithmService algorithmService;
 
-    /*@Test
+    @Test
     @WithMockUser
-    @DisplayName("hello에서 이름이 잘나오는지")
+    @DisplayName("자릿수 합")
     void hello() throws Exception {
-        mockMvc.perform(post("/api/v1/hello"))
-                .with(csrf())
+        when(algorithmService.sumOfDigit(687))
+                .thenReturn(21);
+        mockMvc.perform(get("/api/v1/hello"))
+                 .with(csrf())
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("정상희"));

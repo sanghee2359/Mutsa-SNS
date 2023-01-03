@@ -1,11 +1,17 @@
-package com.first.bulletinboard.domain.entity;
+package com.first.bulletinboard.domain.entity.post;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.first.bulletinboard.domain.dto.post.PostDto;
-import com.first.bulletinboard.domain.dto.post.PostUpdateRequest;
+import com.first.bulletinboard.domain.entity.BaseEntity;
+import com.first.bulletinboard.domain.entity.comment.Comment;
+import com.first.bulletinboard.domain.entity.like.Like;
+import com.first.bulletinboard.domain.entity.user.User;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Builder
@@ -14,18 +20,28 @@ import javax.persistence.*;
 @Getter
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
+@Table(name = "post")
 public class Post extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id")
-    private int id;
+    private Integer id;
     private String title;
     private String body;
 
-    @ManyToOne(optional = false)
-    @JsonIgnore
+    @ManyToOne
     @JoinColumn(name="user_id")
     private User user;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL,orphanRemoval = true)
+    @ToString.Exclude
+    private List<Comment> comments = new ArrayList<>();
+
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL,orphanRemoval = true)
+    @ToString.Exclude
+    private Set<Like> likes = new HashSet<>();
+
 
     public PostDto toPostDto() {
         return PostDto.builder()
