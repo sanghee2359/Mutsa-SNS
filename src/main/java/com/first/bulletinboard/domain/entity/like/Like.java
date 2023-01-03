@@ -1,10 +1,11 @@
-package com.first.bulletinboard.domain.entity;
+package com.first.bulletinboard.domain.entity.like;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.first.bulletinboard.domain.entity.BaseEntity;
+import com.first.bulletinboard.domain.entity.post.Post;
+import com.first.bulletinboard.domain.entity.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
 
@@ -25,5 +26,10 @@ public class Like extends BaseEntity {
     @ManyToOne
     @JoinColumn(name="post_id")
     private Post post;
+
+    public Like(User user, Post post) {
+        this.user = user;
+        this.post = post;
+    }
 
 }
