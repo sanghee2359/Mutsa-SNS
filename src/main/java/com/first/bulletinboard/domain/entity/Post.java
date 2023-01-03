@@ -6,6 +6,8 @@ import com.first.bulletinboard.domain.dto.post.PostUpdateRequest;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Builder
@@ -14,18 +16,28 @@ import javax.persistence.*;
 @Getter
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
+@Table(name = "post")
 public class Post extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id")
-    private int id;
+    private Integer id;
     private String title;
     private String body;
 
-    @ManyToOne(optional = false)
-    @JsonIgnore
+    @ManyToOne
     @JoinColumn(name="user_id")
     private User user;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST)
+    @ToString.Exclude
+    private List<Comment> comments = new ArrayList<>();
+
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST)
+    @ToString.Exclude
+    private List<Like> likes = new ArrayList<>();
+
 
     public PostDto toPostDto() {
         return PostDto.builder()
