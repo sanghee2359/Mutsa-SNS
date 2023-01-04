@@ -18,4 +18,9 @@ public class Response<T> {
     public static <T> Response<T> error(String resultCode, T result) {
         return new Response<>(resultCode, result);
     }
+    //에러 리턴
+    public static Response<ErrorResponse> error(ErrorResponse errorResponse) {
+        return new Response("ERROR", errorResponse);
+    }
+
 }

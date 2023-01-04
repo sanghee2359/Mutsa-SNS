@@ -7,6 +7,7 @@ import com.first.bulletinboard.domain.dto.comment.CommentUpdateRequest;
 import com.first.bulletinboard.domain.entity.comment.Comment;
 import com.first.bulletinboard.domain.entity.post.Post;
 import com.first.bulletinboard.domain.entity.user.User;
+import com.first.bulletinboard.domain.entity.user.UserRole;
 import com.first.bulletinboard.exception.AppException;
 import com.first.bulletinboard.exception.ErrorCode;
 import com.first.bulletinboard.repository.CommentRepository;
@@ -56,9 +57,10 @@ public class CommentService {
                     throw new RuntimeException();
                 });
 
-        if(comment.getUser().getId() != user.getId()) throw new AppException(ErrorCode.INVALID_PERMISSION);
+        if(!isAccessible(comment, user))
+            throw new AppException(ErrorCode.INVALID_PERMISSION);
 
-        // request comment 주입
+        // 수정 : request comment 주입
         comment.modify(request.toEntity(user, post));
         return comment.toDto();
     }
@@ -75,10 +77,14 @@ public class CommentService {
                 .orElseThrow(()->{
                     throw new RuntimeException();
                 });
-        if(comment.getUser().getId() != user.getId()) throw new AppException(ErrorCode.INVALID_PERMISSION);
+        if(!isAccessible(comment, user))
+            throw new AppException(ErrorCode.INVALID_PERMISSION);
+
+        // 삭제
         commentRepository.delete(comment);
         return comment.getId();
     }
+
     public Page<CommentDto> findAllComment(int postId) {
         postRepository.findById(postId)
                 .orElseThrow(()-> {
@@ -86,5 +92,14 @@ public class CommentService {
                 });
         PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("createdAt").descending());
         return commentRepository.findAll(pageRequest).map(CommentReadResponse::fromEntity);
+    }
+
+    /**
+     * 접근 가능 조건
+     * ADMIN or
+     * post의 userId == user의 id
+     */
+    public boolean isAccessible(Comment comment, User user) {
+        return (comment.getUser().getId() != user.getId()) || (user.getRole() == UserRole.ADMIN);
     }
 }

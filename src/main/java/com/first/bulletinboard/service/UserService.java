@@ -72,10 +72,10 @@ public class UserService implements UserDetailsService {
         String password = request.getPassword();
         User user;
         if(userName.equals("admin") && password.equals("admin")){
-            user = request.toEntity(encoder.encode(request.getPassword())
+            user = request.toEntity(encoder.encode(password)
                     , UserRole.ADMIN);
         }else {
-            user = request.toEntity(encoder.encode(request.getPassword())
+            user = request.toEntity(encoder.encode(password)
                     , UserRole.USER);
         }
 

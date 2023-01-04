@@ -3,6 +3,7 @@ package com.first.bulletinboard.service;
 import com.first.bulletinboard.domain.dto.post.*;
 import com.first.bulletinboard.domain.entity.post.Post;
 import com.first.bulletinboard.domain.entity.user.User;
+import com.first.bulletinboard.domain.entity.user.UserRole;
 import com.first.bulletinboard.exception.AppException;
 import com.first.bulletinboard.exception.ErrorCode;
 import com.first.bulletinboard.repository.PostRepository;
@@ -36,7 +37,8 @@ public class PostService {
                 .orElseThrow(()-> {
                     throw new AppException(ErrorCode.POST_NOT_FOUND);
                 });
-        if(updatePost.getUser().getId() != user.getId()) throw new AppException(ErrorCode.INVALID_PERMISSION);
+        if(!isAccessible(updatePost, user))
+            throw new AppException(ErrorCode.INVALID_PERMISSION);
 
         // request title,body 주입
         updatePost.modify(request.toEntity());
@@ -54,14 +56,14 @@ public class PostService {
                 .orElseThrow(()-> {
                     throw new AppException(ErrorCode.POST_NOT_FOUND);
                 });
-        if(post.getUser().getId() != user.getId()) throw new AppException(ErrorCode.INVALID_PERMISSION);
+        if(!isAccessible(post, user))
+            throw new AppException(ErrorCode.INVALID_PERMISSION);
         postRepository.delete(post);
         return post.getId();
     }
 
 
-
-        // list 조회
+    // list 조회
     public Page<PostReadResponse> findAllPost() {
 
         PageRequest pageRequest = PageRequest.of(0, 20, Sort.by("createdAt").descending());
@@ -98,4 +100,14 @@ public class PostService {
         PageRequest pageRequest = PageRequest.of(0, 20, Sort.by("createdAt").descending());
         return postRepository.findAllByUser(user, pageRequest).map(PostReadResponse::fromEntity);
     }
+
+    /**
+     * 접근 가능 조건
+     * ADMIN or
+     * post의 userId == user의 id
+     */
+    public boolean isAccessible(Post post, User user) {
+        return (post.getUser().getId() != user.getId()) || (user.getRole() == UserRole.ADMIN);
+    }
+
 }
