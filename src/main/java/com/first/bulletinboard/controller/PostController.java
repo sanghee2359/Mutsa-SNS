@@ -3,8 +3,6 @@ package com.first.bulletinboard.controller;
 import com.first.bulletinboard.domain.Response;
 import com.first.bulletinboard.domain.dto.post.*;
 import com.first.bulletinboard.domain.entity.post.Post;
-import com.first.bulletinboard.exception.AppException;
-import com.first.bulletinboard.exception.ErrorCode;
 import com.first.bulletinboard.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -41,7 +39,7 @@ public class PostController {
     @GetMapping
     public Response<Page<PostReadResponse>> list(){
         Page<PostReadResponse> posts = postService.findAllPost();
-        if(posts.isEmpty()) throw new AppException(ErrorCode.POST_NOT_FOUND);
+//        if(posts.isEmpty()) throw new AppException(ErrorCode.POST_NOT_FOUND);
         return Response.success(posts);
     }
 

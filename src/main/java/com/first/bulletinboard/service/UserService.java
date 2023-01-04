@@ -12,7 +12,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 
-import org.springframework.security.core.GrantedAuthority;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -71,7 +72,7 @@ public class UserService implements UserDetailsService {
         String userName = request.getUserName();
         String password = request.getPassword();
         User user;
-        if(userName.equals("admin") && password.equals("admin")){
+        if(userName.equals("admin") && password.equals("admin")){ // 최초 관리자 권한
             user = request.toEntity(encoder.encode(password)
                     , UserRole.ADMIN);
         }else {
@@ -90,12 +91,31 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findByUserName(userName)
                 .orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND));
 
-
         // password 일치 여부 확인
         if(!encoder.matches(password, user.getPassword())){
             throw new AppException(INVALID_PASSWORD);
         }
         // 두 가지 확인 도중 예외가 안났다면 token 발행
         return JwtTokenUtil.createToken(userName,secretKey,expireTimeMs);
+    }
+
+    public UserDto roleChange(int id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND));
+
+        if(user.getRole() == UserRole.USER) {
+            user.setRole(UserRole.ADMIN);
+            userRepository.save(user);
+        }else if(user.getRole() == UserRole.ADMIN) {
+            user.setRole(UserRole.USER);
+            userRepository.save(user);
+        }
+        return user.toUserDto();
+    }
+
+    public Page<UserDto> findAllUser() {
+
+        PageRequest pageRequest = PageRequest.of(0, 20);
+        return userRepository.findAll(pageRequest).map(User::toUserDto);
     }
 }

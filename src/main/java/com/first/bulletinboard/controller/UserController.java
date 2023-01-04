@@ -3,13 +3,11 @@ package com.first.bulletinboard.controller;
 import com.first.bulletinboard.domain.Response;
 import com.first.bulletinboard.domain.dto.user.*;
 import com.first.bulletinboard.service.UserService;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Slf4j
@@ -29,5 +27,21 @@ public class UserController {
     public Response<UserLoginResponse> login(@RequestBody UserLoginRequest userLoginRequest) {
         String token = userService.login(userLoginRequest.getUserName(), userLoginRequest.getPassword());
         return Response.success(new UserLoginResponse(token));
+    }
+
+    @ApiOperation(value = "user 권한 변경", notes = "ADMIN만 접근 가능합니다")
+    @PostMapping("/{id}/role/change")
+    public Response<UserRoleChangeResponse> roleChange(@PathVariable int id) {
+        UserDto dto = userService.roleChange(id);
+        return Response.success(new UserRoleChangeResponse(dto.getId()
+                ,String.format("%s 으로 권한 변경 완료", dto.getRole())));
+    }
+
+    @ApiOperation(value = "user 조회", notes = "ADMIN만 접근 가능합니다")
+    @GetMapping("/list")
+    public Response<Page<UserDto>> list(){
+        Page<UserDto> users = userService.findAllUser();
+//        if(users.isEmpty()) throw new AppException(ErrorCode.USERNAME_NOT_FOUND);
+        return Response.success(users);
     }
 }

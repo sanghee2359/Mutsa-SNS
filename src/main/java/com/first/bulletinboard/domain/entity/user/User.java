@@ -67,7 +67,6 @@ public class User implements UserDetails {
         return UserDto.builder()
                 .id(this.id)
                 .userName(this.userName)
-                .password(this.password)
                 .role(this.role)
                 .build();
     }
