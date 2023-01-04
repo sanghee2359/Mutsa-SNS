@@ -85,7 +85,7 @@ public class CommentService {
         return comment.getId();
     }
 
-    public Page<CommentDto> findAllComment(int postId) {
+    public Page<CommentDto> findAllComments(int postId) {
         postRepository.findById(postId)
                 .orElseThrow(()-> {
                     throw new AppException(ErrorCode.POST_NOT_FOUND);
@@ -100,6 +100,6 @@ public class CommentService {
      * post의 userId == user의 id
      */
     public boolean isAccessible(Comment comment, User user) {
-        return (comment.getUser().getId() != user.getId()) || (user.getRole() == UserRole.ADMIN);
+        return (comment.getUser().getId() == user.getId()) || (user.getRole() == UserRole.ADMIN);
     }
 }

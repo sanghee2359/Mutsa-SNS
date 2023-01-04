@@ -38,7 +38,7 @@ public class CommentController {
     }
     @GetMapping
     public Response<Page<CommentDto>> list(@PathVariable int postId){
-        Page<CommentDto> postComments = commentService.findAllComment(postId);
+        Page<CommentDto> postComments = commentService.findAllComments(postId);
         if(postComments.isEmpty()) throw new AppException(ErrorCode.POST_NOT_FOUND);
         return Response.success(postComments);
     }

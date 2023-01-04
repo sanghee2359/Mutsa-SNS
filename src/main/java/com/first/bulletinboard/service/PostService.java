@@ -37,12 +37,13 @@ public class PostService {
                 .orElseThrow(()-> {
                     throw new AppException(ErrorCode.POST_NOT_FOUND);
                 });
-        if(!isAccessible(updatePost, user))
-            throw new AppException(ErrorCode.INVALID_PERMISSION);
 
-        // request title,body 주입
-        updatePost.modify(request.toEntity());
-        log.info("update Title:{}",updatePost.getTitle());
+        if(isAccessible(updatePost, user)){
+            // request title,body 주입
+            updatePost.modify(request.toEntity());
+            log.info("update Title:{}",updatePost.getTitle());
+        }else throw new AppException(ErrorCode.INVALID_PERMISSION);
+
         return updatePost.getId();
     }
 
@@ -56,9 +57,9 @@ public class PostService {
                 .orElseThrow(()-> {
                     throw new AppException(ErrorCode.POST_NOT_FOUND);
                 });
-        if(!isAccessible(post, user))
-            throw new AppException(ErrorCode.INVALID_PERMISSION);
-        postRepository.delete(post);
+        if(isAccessible(post, user)) postRepository.delete(post);
+        else throw new AppException(ErrorCode.INVALID_PERMISSION);
+
         return post.getId();
     }
 
@@ -96,9 +97,11 @@ public class PostService {
         User user = userRepository.findByUserName(userName)
                 .orElseThrow(()-> {
                     throw new AppException(ErrorCode.USERNAME_NOT_FOUND);
-                });
+        });
         PageRequest pageRequest = PageRequest.of(0, 20, Sort.by("createdAt").descending());
-        return postRepository.findAllByUser(user, pageRequest).map(PostReadResponse::fromEntity);
+        Page<PostReadResponse> posts= postRepository.findAllByUser(user, pageRequest).map(PostReadResponse::fromEntity);
+        if(posts.isEmpty()) throw new AppException(ErrorCode.SUCCESS_GET_MYFEAD);
+        return posts;
     }
 
     /**
@@ -107,7 +110,7 @@ public class PostService {
      * post의 userId == user의 id
      */
     public boolean isAccessible(Post post, User user) {
-        return (post.getUser().getId() != user.getId()) || (user.getRole() == UserRole.ADMIN);
+        return (post.getUser().getId() == user.getId()) || (user.getRole() == UserRole.ADMIN);
     }
 
 }
