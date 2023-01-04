@@ -1,11 +1,14 @@
 package com.first.bulletinboard.config;
 
+import com.first.bulletinboard.config.securityErrorHandling.CustomAccessDeniedHandler;
+import com.first.bulletinboard.config.securityErrorHandling.CustomAuthenticationEntryPointHandler;
+import com.first.bulletinboard.config.securityErrorHandling.ExceptionHandlerFilter;
 import com.first.bulletinboard.filter.JwtTokenFilter;
 import com.first.bulletinboard.service.UserService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -14,9 +17,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
-@Configuration
 @RequiredArgsConstructor
-public class SecurityConfig {
+public class SecurityConfig  {
     private final UserService userService;
     @Value("${jwt.token.secret}")
     private String secretKey;
@@ -27,17 +29,23 @@ public class SecurityConfig {
                 .csrf().disable()
                 .cors().and()
                 .authorizeRequests()
-                .antMatchers("/swagger-ui/**").permitAll()
-                .antMatchers("/api/v1/users/join", "/api/v1/users/login").permitAll() // join, login은 언제나 가능
-                .antMatchers(HttpMethod.GET, "/api/v1/posts/**").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/v1/posts/**").authenticated() // antMacher 순서대로 우선순위가 됨
+                .antMatchers("/api/v1/users/join", "/api/v1/users/login").permitAll()
+                .antMatchers( "/api/v1/**","/api/v1/users/{userId}/role/change").hasAnyRole("ADMIN")
+                .antMatchers(HttpMethod.POST, "/api/v1/**").authenticated()
+                .antMatchers(HttpMethod.PUT, "/api/v1/**").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/api/v1/**").authenticated()
+                .and()
+                .exceptionHandling()
+                .authenticationEntryPoint(new CustomAuthenticationEntryPointHandler())
+                .accessDeniedHandler(new CustomAccessDeniedHandler())
                 .and()
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // jwt사용하는 경우 씀
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilterBefore(new JwtTokenFilter(userService, secretKey), UsernamePasswordAuthenticationFilter.class)
-                // UserNamePasswordAuthenticationFilter적용하기 전에 JWTTokenFilter를 적용 하라는 뜻 입니다.
+                .addFilterBefore(new ExceptionHandlerFilter(), JwtTokenFilter.class)
                 .build();
+
     }
 
 }
