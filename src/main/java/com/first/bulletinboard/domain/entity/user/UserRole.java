@@ -1,8 +1,14 @@
 package com.first.bulletinboard.domain.entity.user;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@AllArgsConstructor
+@Getter
 public enum UserRole {
-    ROLE_USER, ROLE_ADMIN;
+    USER("ROLE_USER"),
+    ADMIN("ROLE_ADMIN");
 
+    private String value;
 }

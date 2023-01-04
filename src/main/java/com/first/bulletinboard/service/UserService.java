@@ -3,6 +3,7 @@ package com.first.bulletinboard.service;
 import com.first.bulletinboard.domain.entity.user.User;
 import com.first.bulletinboard.domain.dto.user.UserDto;
 import com.first.bulletinboard.domain.dto.user.UserJoinRequest;
+import com.first.bulletinboard.domain.entity.user.UserRole;
 import com.first.bulletinboard.exception.AppException;
 import com.first.bulletinboard.exception.ErrorCode;
 import com.first.bulletinboard.repository.UserRepository;
@@ -19,6 +20,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 import static com.first.bulletinboard.exception.ErrorCode.INVALID_PASSWORD;
 
 
@@ -34,15 +37,26 @@ public class UserService implements UserDetailsService {
     // userDetails
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
-        User user = userRepository.findByUserName(username)
-                .orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND));
-        return null;
-        /*List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        //adminUser 정보 조회
+        Optional<User> user = userRepository.findByUserName(username);
 
-        if (Role.ADMIN.equals(member.getRoleType())) {
-            grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-        }*/
+        if(user.isPresent()) {
+            User roleUser = user.get();
+
+            User authUser = User.builder()
+                    .id(roleUser.getId())
+                    .userName(roleUser.getUsername())
+                    .password(roleUser.getPassword())
+                    .role(roleUser.getRole())
+                    .updatedAt(roleUser.getUpdatedAt())
+                    .removedAt(roleUser.getRemovedAt())
+                    .registeredAt(roleUser.getRegisteredAt())
+                    .build();
+
+            log.info("auth : {}", authUser);
+            return authUser;
+        }
+        return null;
     }
     @Transactional
     public UserDto join(UserJoinRequest request) {
@@ -52,10 +66,21 @@ public class UserService implements UserDetailsService {
         userRepository.findByUserName(request.getUserName())
                 .ifPresent(user->{
                     throw new AppException(ErrorCode.DUPLICATED_USER_NAME);
-    });
+        });
+        // 역할 부여
+        String userName = request.getUserName();
+        String password = request.getPassword();
+        User user;
+        if(userName.equals("admin") && password.equals("admin")){
+            user = request.toEntity(encoder.encode(request.getPassword())
+                    , UserRole.ADMIN);
+        }else {
+            user = request.toEntity(encoder.encode(request.getPassword())
+                    , UserRole.USER);
+        }
 
         // 회원가입 .save()
-        User savedUser = userRepository.save(request.toEntity(encoder.encode(request.getPassword())));
+        User savedUser = userRepository.save(user);
         return savedUser.toUserDto();
     }
 

@@ -47,6 +47,7 @@ public class User implements UserDetails {
     private LocalDateTime removedAt;
 
     @Enumerated(EnumType.STRING) // string으로 저장
+    @JsonProperty
     private UserRole role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
@@ -75,7 +76,7 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         ArrayList<GrantedAuthority> auth = new ArrayList<>();
-        auth.add(new SimpleGrantedAuthority(role.name()));
+        auth.add(new SimpleGrantedAuthority(role.getValue()));
         return auth;
     }
 
