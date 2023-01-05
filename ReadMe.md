@@ -24,5 +24,5 @@
 <img src="src/main/resources/images/erd_1.png" width="515" height="769"/>
 
 #### 🥉 EndPoint
-<img src="src/main/resources/images/image-20230105224151877.png" width="600" height="483"/>
+<img src="src/main/resources/images/endpoint.png" width="600" height="483"/>
 
