@@ -21,8 +21,8 @@
 - 필수 라이브러리 : SpringBoot Web, MySQL, Spring Data JPA, Lombok, Spring Security
 
 #### 🥈 ERD Diagram
-<img src="image-20230105224241182.png" alt="image-20230105224241182" width="width 40%" height="height 40%"/>
+<img src="src/main/resources/images/erd_1.png" width="515" height="769"/>
 
 #### 🥉 EndPoint
-<img src=image-20230105224151877.png" alt="image-20230105224151877" width="width 40%" height="height 40%"/>
+<img src="src/main/resources/images/image-20230105224151877.png" width="600" height="483"/>
 
