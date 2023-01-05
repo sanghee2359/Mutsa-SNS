@@ -26,7 +26,7 @@ import java.util.List;
 @Getter
 @Setter
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "user")
+@Table(name = "users")
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,7 +44,7 @@ public class User implements UserDetails {
     @LastModifiedDate
     @Column(nullable = false)
     private LocalDateTime updatedAt;
-    private LocalDateTime removedAt;
+    private LocalDateTime deletedAt;
 
     @Enumerated(EnumType.STRING) // string으로 저장
     @JsonProperty

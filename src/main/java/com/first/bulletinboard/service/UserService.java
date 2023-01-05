@@ -50,7 +50,7 @@ public class UserService implements UserDetailsService {
                     .password(roleUser.getPassword())
                     .role(roleUser.getRole())
                     .updatedAt(roleUser.getUpdatedAt())
-                    .removedAt(roleUser.getRemovedAt())
+                    .deletedAt(roleUser.getDeletedAt())
                     .registeredAt(roleUser.getRegisteredAt())
                     .build();
 
