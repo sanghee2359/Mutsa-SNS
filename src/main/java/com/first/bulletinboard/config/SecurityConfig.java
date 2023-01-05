@@ -31,7 +31,7 @@ public class SecurityConfig  {
                 .authorizeRequests()
                 .antMatchers("/api/v1/users/join", "/api/v1/users/login").permitAll()
                 .antMatchers( "/api/v1/users/list","/api/v1/users/{userId}/role/change").hasAnyRole("ADMIN")
-                .antMatchers(HttpMethod.GET,"/api/v1/posts/my").authenticated()
+                .antMatchers(HttpMethod.GET,"/api/v1/posts/my", "/api/v1/alarms").authenticated()
                 .antMatchers(HttpMethod.POST, "/api/v1/**").authenticated()
                 .antMatchers(HttpMethod.PUT, "/api/v1/**").authenticated()
                 .antMatchers(HttpMethod.DELETE, "/api/v1/**").authenticated()
