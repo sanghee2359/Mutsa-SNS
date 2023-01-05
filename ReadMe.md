@@ -21,9 +21,9 @@
 - 필수 라이브러리 : SpringBoot Web, MySQL, Spring Data JPA, Lombok, Spring Security
 
 #### 🥈 ERD Diagram
-<img src="C:\Users\wjdtk\AppData\Roaming\Typora\typora-user-images\image-20230105224241182.png" alt="image-20230105224241182" style="zoom: 67%;" />
+<img src="image-20230105224241182.png" alt="image-20230105224241182" style="zoom: 67%;" />
 
 #### 🥉 EndPoint
 
-<img src="C:\Users\wjdtk\AppData\Roaming\Typora\typora-user-images\image-20230105224151877.png" alt="image-20230105224151877" style="zoom: 67%;" />
+<img src=image-20230105224151877.png" alt="image-20230105224151877" style="zoom: 67%;" />
 
