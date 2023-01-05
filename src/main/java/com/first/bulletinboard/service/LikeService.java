@@ -19,6 +19,7 @@ public class LikeService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final LikeRepository likeRepository;
+    private final AlarmService alarmService;
 
     public boolean pressLike(int postId, String userName) {
         User user = userRepository.findByUserName(userName)
@@ -30,7 +31,8 @@ public class LikeService {
                     throw new AppException(ErrorCode.POST_NOT_FOUND);
                 });
         if(isNotAlreadyPressed(user, post)) {
-            likeRepository.save(new Like(user, post));
+            Like like = likeRepository.save(new Like(user, post));
+            alarmService.createLikeAlarm(like); // like 알람 생성
             return true;
 
         } else throw new AppException(ErrorCode.ALREADY_PRESSED_LIKE);

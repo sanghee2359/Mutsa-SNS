@@ -25,6 +25,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final AlarmService alarmService;
 
     // comment 생성
     public CommentDto createComment(Integer postId, CommentCreateRequest request, String userName) {
@@ -38,6 +39,7 @@ public class CommentService {
                 });
 
         Comment savedComment = commentRepository.save(request.toEntity(user, post));
+        alarmService.createCommentAlarm(savedComment); // comment 알람 생성
         return savedComment.toDto();
     }
 
