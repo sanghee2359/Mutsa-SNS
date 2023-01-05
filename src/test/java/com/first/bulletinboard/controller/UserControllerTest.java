@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -24,7 +25,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest
+@WebMvcTest(UserController.class)
+@MockBean(JpaMetamodelMappingContext.class)
 class UserControllerTest {
     @Autowired
     MockMvc mockMvc;
@@ -39,6 +41,12 @@ class UserControllerTest {
             .userName("sanghee")
             .password("13579")
             .build();
+
+    /**
+     * 회원가입
+     * 성공
+     * 실패 - userName 중복
+     */
     @Test
     @WithMockUser
     @DisplayName("회원가입 success")
@@ -50,7 +58,7 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)// 타입
                 .content(objectMapper.writeValueAsBytes(userJoinRequest)))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isOk()); // OK, 200반환
     }
 
     @Test
@@ -67,6 +75,12 @@ class UserControllerTest {
                 .andExpect(status().isConflict());
     }
 
+    /**
+     * 로그인
+     * 성공
+     * 실패1 - userName 없음
+     * 실패2 - password 틀림
+     */
     @Test
     @WithMockUser
     @DisplayName("로그인 success")
@@ -116,5 +130,4 @@ class UserControllerTest {
                 .andDo(print())
                 .andExpect(status().isUnauthorized());
     }
-
 }
