@@ -7,6 +7,8 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -38,10 +40,9 @@ public class UserController {
     }
 
     @ApiOperation(value = "user 조회", notes = "ADMIN만 접근 가능합니다")
-    @GetMapping("/list")
-    public Response<Page<UserDto>> list(){
-        Page<UserDto> users = userService.findAllUser();
-//        if(users.isEmpty()) throw new AppException(ErrorCode.USERNAME_NOT_FOUND);
-        return Response.success(users);
+    @GetMapping
+    public Response<Page<UserListResponse>> findUserList(@PageableDefault(size = 20, sort = "createdAt") Pageable pageable){
+        Page<UserDto> users = userService.findAllUser(pageable);
+        return Response.success(users.map(UserListResponse::of));
     }
 }

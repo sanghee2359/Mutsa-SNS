@@ -53,7 +53,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         // authentication 구현체(객체 생성)
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+                new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities()); // 권한
 
         // detail 추가
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -68,7 +68,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         response.setContentType("application/json;charset=UTF-8");
         response.setStatus(errorCode.getHttpStatus().value());
         ObjectMapper objectMapper = new ObjectMapper();
-// 여기 바꿨음
+
         ErrorResponse errorResponse = new ErrorResponse
                 (errorCode, errorCode.getMessage());
 

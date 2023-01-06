@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -35,15 +35,14 @@ public class UserService implements UserDetailsService {
     @Value("${jwt.token.secret}") // spring에서 지원하는 어쩌고
     private String secretKey;
     private Long expireTimeMs = 1000 * 60 * 60L; // 1초 * 60 * 60 = 1hour
-    // userDetails
+
+    // username을 가지고 UserDetails 객체 리턴
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
-        //adminUser 정보 조회
         Optional<User> user = userRepository.findByUserName(username);
 
         if(user.isPresent()) {
             User roleUser = user.get();
-
             User authUser = User.builder()
                     .id(roleUser.getId())
                     .userName(roleUser.getUsername())
@@ -53,17 +52,13 @@ public class UserService implements UserDetailsService {
                     .deletedAt(roleUser.getDeletedAt())
                     .registeredAt(roleUser.getRegisteredAt())
                     .build();
-
-            log.info("auth : {}", authUser);
             return authUser;
         }
         return null;
     }
     @Transactional
     public UserDto join(UserJoinRequest request) {
-        // 비즈니스 로직 - 회원 가입
-        // 회원 userName 중복 check
-        // 중복되면 회원가입 불가능 exception발생
+        // userName 중복
         userRepository.findByUserName(request.getUserName())
                 .ifPresent(user->{
                     throw new AppException(ErrorCode.DUPLICATED_USER_NAME);
@@ -72,30 +67,29 @@ public class UserService implements UserDetailsService {
         String userName = request.getUserName();
         String password = request.getPassword();
         User user;
-        if(userName.equals("admin") && password.equals("admin")){ // 최초 관리자 권한
+
+        // ADMIN 회원을 생성할 때 필수 조건
+        if(userName.equals("admin") && password.equals("admin")){
             user = request.toEntity(encoder.encode(password)
                     , UserRole.ADMIN);
-        }else {
+        } // ADMIN -> USER
+        else {
             user = request.toEntity(encoder.encode(password)
                     , UserRole.USER);
         }
 
-        // 회원가입 .save()
+        // 바뀐 정보 저장 및 dto 변환
         User savedUser = userRepository.save(user);
         return savedUser.toUserDto();
     }
 
     public String login(String userName, String password) {
-        // userName 존재 여부 확인
-        // 없다면 NOT-FOUND 에러
         User user = userRepository.findByUserName(userName)
                 .orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND));
 
-        // password 일치 여부 확인
         if(!encoder.matches(password, user.getPassword())){
             throw new AppException(INVALID_PASSWORD);
         }
-        // 두 가지 확인 도중 예외가 안났다면 token 발행
         return JwtTokenUtil.createToken(userName,secretKey,expireTimeMs);
     }
 
@@ -113,9 +107,7 @@ public class UserService implements UserDetailsService {
         return user.toUserDto();
     }
 
-    public Page<UserDto> findAllUser() {
-
-        PageRequest pageRequest = PageRequest.of(0, 20);
-        return userRepository.findAll(pageRequest).map(User::toUserDto);
+    public Page<UserDto> findAllUser(Pageable pageable) {
+        return userRepository.findAll(pageable).map(User::toUserDto);
     }
 }
