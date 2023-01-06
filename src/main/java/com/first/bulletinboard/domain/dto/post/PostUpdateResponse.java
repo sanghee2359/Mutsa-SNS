@@ -6,6 +6,6 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class PostUpdateResponse {
-    private String messagge;
+    private String message;
     private int postId;
 }
