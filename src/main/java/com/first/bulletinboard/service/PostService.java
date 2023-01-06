@@ -47,7 +47,7 @@ public class PostService {
         User user = findUserByUserName(userName);
         Page<Post> posts= postRepository.findAllByUser(user, pageable);
 
-        if(posts.isEmpty()) throw new AppException(ErrorCode.SUCCESS_GET_MYFEAD);
+        if(posts.isEmpty()) throw new AppException(ErrorCode.SUCCESS_GET_MYFEED);
         return PostDto.toPostList(posts);
     }
 

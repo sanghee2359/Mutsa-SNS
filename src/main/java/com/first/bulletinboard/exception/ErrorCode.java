@@ -17,7 +17,7 @@ public enum ErrorCode {
     INVALID_PERMISSION(HttpStatus.UNAUTHORIZED, "사용자가 권한이 없습니다."),
     FORBIDDEN_REQUEST(HttpStatus.FORBIDDEN, "ADMIN 회원만 접근할 수 있습니다."),
     DATABASE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "DB에러"),
-    SUCCESS_GET_MYFEAD(HttpStatus.ACCEPTED,"호출에 성공했으나 내용이 없습니다"),
+    SUCCESS_GET_MYFEED(HttpStatus.ACCEPTED,"호출에 성공했으나 내용이 없습니다"),
     ALREADY_PRESSED_LIKE(HttpStatus.CONFLICT, "이미 좋아요를 누른 사용자입니다.");
 
     private final HttpStatus httpStatus;

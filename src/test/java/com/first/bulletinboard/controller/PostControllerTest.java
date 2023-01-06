@@ -1,15 +1,19 @@
 package com.first.bulletinboard.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.first.bulletinboard.domain.dto.post.*;
 import com.first.bulletinboard.exception.AppException;
 import com.first.bulletinboard.exception.ErrorCode;
 import com.first.bulletinboard.service.PostService;
 import com.first.bulletinboard.service.UserService;
+import com.first.bulletinboard.utils.JwtTokenUtil;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.*;
@@ -49,6 +53,16 @@ class PostControllerTest {
     // given : 테스트를 위해 주어진 상태, 구체화하고자 하는 행동을 시작하기 전에 테스트 상태
     // when : 테스트 대상에게 가해진 어떠한 상태, 테스트 대상에게 주어진 어떠한 조건
     // then : 앞선 과정의 결과
+
+
+    String token;
+    @Value("${jwt.token.secret}")
+    private String secretKey;
+    @BeforeEach()
+    public void token() {
+        long expireTimeMs = 1000 * 60 * 60;
+        token = JwtTokenUtil.createToken("user", secretKey, expireTimeMs);
+    }
 
     /**
      * create test
@@ -119,7 +133,7 @@ class PostControllerTest {
     @WithMockUser
     @DisplayName("[GET] postList 조회 성공 - 0번이 1번보다 날짜가 최신")
     void read_postList_success() throws Exception {
-        when(postService.findAllPost(any())).thenReturn(mock(Page.class));
+        when(postService.findAllPost(any())).thenReturn(mock(Page.class)); //
 
         mockMvc.perform(get("/api/v1/posts")
                         .with(csrf())
@@ -163,6 +177,7 @@ class PostControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk());
     }
+
     /**
      * update test
      */
@@ -207,53 +222,152 @@ class PostControllerTest {
     @Test
     @WithMockUser
     @DisplayName("[PUT] 포스트 수정 실패(2) : 작성자 불일치")
-    void update_post_fail2() {
+    void update_post_fail2() throws Exception {
+        PostUpdateRequest request = new PostUpdateRequest("title1", "body1");
+
+        // given -> errorCode
+        given(postService.updateById(anyInt(),any(),any()))
+                .willThrow(new AppException(ErrorCode.INVALID_PERMISSION));
+
+        // then
+        mockMvc.perform(put("/api/v1/posts/1")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(request)))
+                .andDo(print())
+                .andExpect(status().isUnauthorized());
 
     }
     @Test
     @WithMockUser
     @DisplayName("[PUT] 포스트 수정 실패(3) : 데이터베이스 에러")
-    void update_post_fail3() {
+    void update_post_fail3() throws Exception {
+        PostUpdateRequest request = new PostUpdateRequest("title1", "body1");
 
+        // given -> errorCode
+        given(postService.updateById(anyInt(),any(),any()))
+                .willThrow(new AppException(ErrorCode.DATABASE_ERROR));
+
+        // then
+        mockMvc.perform(put("/api/v1/posts/1")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(request)))
+                .andDo(print())
+                .andExpect(status().isInternalServerError());
     }
 
 
     /**
      * delete test
      */
-
-    /*@Test
+    @Test
     @WithMockUser
-    @DisplayName("마이피드 조회 성공")
-    void myfeed_success() throws Exception {
-        String userName = "sanghee";
-        String password = "13579";
-        // 무엇을 보내서 : name, pw
-//        given(postService.findMyFeed())
-        // 무엇을 받을까? : USERNAME_NOT_FOUND
-        mockMvc.perform(get("/api/v1/posts/my")
+    @DisplayName("[DELETE] 포스트 삭제 성공")
+    void delete_post_success() throws Exception {
+        // when
+        when(postService.deleteById(anyInt(),any())).thenReturn(PostDto.builder().id(1).build());
+
+        // then
+        mockMvc.perform(delete("/api/v1/posts/1")
                         .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(new UserLoginRequest(userName,password))))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.result.message").exists())
+                .andExpect(jsonPath("$.result.postId").exists())
                 .andDo(print())
                 .andExpect(status().isOk());
     }
+
     @Test
     @WithMockUser
-    @DisplayName("마이피드 조회 실패 - 인증 실패 - JWT가 유효하지 않은 경우")
-    void myfeed_fail() throws Exception {
-        String userName = "sanghee";
-        String password = "13579";
-        // 무엇을 보내서 : name, pw
+    @DisplayName("[DELETE] 포스트 삭제 실패(1) : 인증 실패")
+    void delete_post_fail1() throws Exception {
+        // given -> errorCode
+        given(postService.deleteById(anyInt(),any()))
+                .willThrow(new AppException(ErrorCode.INVALID_TOKEN));
 
-        // 무엇을 받을까? : USERNAME_NOT_FOUND
-        mockMvc.perform(post("/api/v1/posts/my")
+        // then
+        mockMvc.perform(delete("/api/v1/posts/1")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+    @Test
+    @WithMockUser
+    @DisplayName("[DELETE] 포스트 삭제 실패(2) : 작성자 불일치")
+    void delete_post_fail2() throws Exception {
+        // given -> errorCode
+        given(postService.deleteById(anyInt(),any()))
+                .willThrow(new AppException(ErrorCode.INVALID_PERMISSION));
+
+        // then
+        mockMvc.perform(delete("/api/v1/posts/1")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isUnauthorized());
+
+    }
+    @Test
+    @WithMockUser
+    @DisplayName("[DELETE] 포스트 삭제 실패(3) : 데이터베이스 에러")
+    void delete_post_fail3() throws Exception {
+        PostUpdateRequest request = new PostUpdateRequest("title1", "body1");
+
+        // given -> errorCode
+        given(postService.updateById(anyInt(),any(),any()))
+                .willThrow(new AppException(ErrorCode.DATABASE_ERROR));
+
+        // then
+        mockMvc.perform(delete("/api/v1/posts/1")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(new UserLoginRequest(userName,password))))
+                        .content(objectMapper.writeValueAsBytes(request)))
+                .andDo(print())
+                .andExpect(status().isInternalServerError());
+    }
+
+    /**
+     * my feed test
+     */
+
+
+    /*@Test
+    @WithMockUser
+    @DisplayName("[GET] 마이피드 조회 성공")
+    void myfeed_success() throws Exception {
+        PostDto dto = PostDto.builder()
+                .id(1)
+                .title("title")
+                .body("content")
+                .userName("sanghee")
+                .build();
+
+        given(postService.findMyFeed(any(),any())).willReturn();
+        when(postService.findMyFeed(any(),any())).thenReturn(mock(Page.class));
+        mockMvc.perform(get("/api/v1/posts/my")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("size","20")
+                        .param("sort","createdAt,desc"))
+                .andExpect(jsonPath("$.result.content[0].id").value(1))
+                .andExpect(jsonPath("$.result.content[0].title").value("title"))
+                .andExpect(jsonPath("$.result.content[0].body").value("content"))
+                .andExpect(jsonPath("$.result.content[0].userName").value("sanghee"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }*/
 
+    @Test
+    @WithMockUser
+    @DisplayName("[GET] 마이피드 조회 실패 - 인증 실패 - JWT가 유효하지 않은 경우")
+    void myfeed_fail() throws Exception {
+        given(postService.findMyFeed(any(),any())).willThrow(new AppException(ErrorCode.INVALID_PERMISSION));
 
+        mockMvc.perform(get("/api/v1/posts/my")
+                        .with(csrf()))
+                .andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
 }
