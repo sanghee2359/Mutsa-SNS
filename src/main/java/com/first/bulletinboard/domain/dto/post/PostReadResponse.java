@@ -22,14 +22,14 @@ public class PostReadResponse {
     private LocalDateTime createdAt;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastModifiedAt;
-    public static PostReadResponse fromEntity(Post post) {
+    public static PostReadResponse of(PostDto dto) {
         PostReadResponse response = PostReadResponse.builder()
-                .id(post.getId())
-                .title(post.getTitle())
-                .body(post.getBody())
-                .userName(post.getUser().getUsername())
-                .createdAt(post.getCreatedAt())
-                .lastModifiedAt(post.getLastModifiedAt())
+                .id(dto.getId())
+                .title(dto.getTitle())
+                .body(dto.getBody())
+                .userName(dto.getUserName())
+                .createdAt(dto.getCreatedAt())
+                .lastModifiedAt(dto.getLastModifiedAt())
                 .build();
         return response;
     }
