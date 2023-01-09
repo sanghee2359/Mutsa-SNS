@@ -1,11 +1,14 @@
 package com.first.bulletinboard.controller;
 
 import com.first.bulletinboard.domain.Response;
+import com.first.bulletinboard.domain.dto.alarm.AlarmDto;
+import com.first.bulletinboard.domain.dto.comment.CommentCreateResponse;
 import com.first.bulletinboard.domain.dto.alarm.AlarmReadResponse;
 import com.first.bulletinboard.domain.dto.comment.*;
 import com.first.bulletinboard.domain.dto.post.*;
 import com.first.bulletinboard.domain.entity.alarm.Alarm;
 import com.first.bulletinboard.domain.entity.comment.Comment;
+import com.first.bulletinboard.domain.entity.post.Post;
 import com.first.bulletinboard.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -40,7 +43,7 @@ public class PostController {
 
     // postId로 post 상세 출력
     @GetMapping("/{id}")
-    public Response<PostReadResponse> findPost(@PathVariable int id) {
+    public Response<PostReadResponse> findPost(@PathVariable Integer id) {
         PostDto dto = postService.findByPostId(id);
         PostReadResponse response = PostReadResponse.of(dto);
         return Response.success(response);
@@ -54,7 +57,7 @@ public class PostController {
     }
     // post 수정
     @PutMapping("/{id}")
-    public Response<PostUpdateResponse> updatePost(Authentication authentication, @PathVariable int id
+    public Response<PostUpdateResponse> updatePost(Authentication authentication, @PathVariable Integer id
             , @RequestBody PostUpdateRequest postUpdateRequest) {
 
         PostDto dto = postService.updateById(id, postUpdateRequest, authentication.getName());
@@ -62,54 +65,47 @@ public class PostController {
     }
     // post 삭제
     @DeleteMapping("/{id}")
-    public Response<PostDeleteResponse> deletePost(@PathVariable int id, Authentication authentication) {
+    public Response<PostDeleteResponse> deletePost(@PathVariable Integer id, Authentication authentication) {
         PostDto dto = postService.deleteById(id, authentication.getName());
         return Response.success(new PostDeleteResponse("포스트 삭제 완료",dto.getId()));
     }
     //-------------------------------------Comment-------------------------------------//
 
 
-    @PostMapping
-    public Response<CommentDto> createComment(@PathVariable Integer postId, @RequestBody CommentCreateRequest commentCreateRequest, Authentication authentication) {
+    @PostMapping("/{postId}/comments")
+    public Response<CommentCreateResponse> createComment(@PathVariable Integer postId, @RequestBody CommentCreateRequest commentCreateRequest, Authentication authentication) {
         CommentDto commentDto = postService.createComment(postId, commentCreateRequest, authentication.getName());
-        return Response.success(commentDto);
+        return Response.success(CommentCreateResponse.of(commentDto));
     }
     // read
-    @GetMapping
-    public Response<Page<CommentReadResponse>> findCommentList(@PathVariable int postId, @PageableDefault(size = 10, sort = "createdAt",
+    @GetMapping("/{postId}/comments")
+    public Response<Page<CommentReadResponse>> findCommentList(@PathVariable Integer postId, @PageableDefault(size = 10, sort = "createdAt",
             direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<Comment> comment = postService.findAllComments(postId, pageable);
+        Page<CommentDto> comment = postService.findAllComments(postId, pageable);
         return Response.success(comment.map(CommentReadResponse::of));
     }
     // update
-    @PutMapping("/{id}") // comment의 id
+    @PutMapping("/{postId}/comments/{id}") // comment의 id
     public Response<CommentUpdateResponse> updateComment(@PathVariable Integer postId, @PathVariable Integer id, @RequestBody CommentUpdateRequest commentUpdateRequest, Authentication authentication){
         CommentDto commentDto = postService.updateComment(postId, id, commentUpdateRequest, authentication.getName());
         return Response.success(CommentUpdateResponse.of(commentDto));
     }
     // delete
-    @DeleteMapping("/{id}")
-    public Response<CommentDeleteResponse> deleteComment(@PathVariable int postId, @PathVariable int id, Authentication authentication) {
+    @DeleteMapping("/{postId}/comments/{id}")
+    public Response<CommentDeleteResponse> deleteComment(@PathVariable Integer postId, @PathVariable Integer id, Authentication authentication) {
         CommentDto commentDto = postService.deleteComment(postId, id, authentication.getName());
         return Response.success(new CommentDeleteResponse("댓글 삭제 완료", commentDto.getId()));
     }
 
     //-------------------------------------Like-------------------------------------//
     @PostMapping("/{postId}/likes")
-    public Response<?> pressLike(@PathVariable int postId, Authentication authentication) {
+    public Response<?> pressLike(@PathVariable Integer postId, Authentication authentication) {
         postService.pressLike(postId, authentication.getName());
         return Response.success("좋아요를 눌렀습니다.");
     }
     @GetMapping("/{postsId}/likes")
-    public Response<?> numberOfLikes(@PathVariable int postsId) {
+    public Response<?> numberOfLikes(@PathVariable Integer postsId) {
         return Response.success(postService.numberOfLikes(postsId));
     }
 
-    //-------------------------------------Alarm-------------------------------------//
-    @GetMapping
-    public Response<Page<AlarmReadResponse>> findAlarmList(Authentication authentication, @PageableDefault(size = 10, sort = "createdAt",
-            direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<Alarm> dto = postService.findAllAlarms(authentication.getName(), pageable);
-        return Response.success(dto.map(AlarmReadResponse::of));
-    }
 }

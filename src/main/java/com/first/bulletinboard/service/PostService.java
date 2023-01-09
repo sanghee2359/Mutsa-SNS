@@ -1,13 +1,10 @@
 package com.first.bulletinboard.service;
 
-import com.first.bulletinboard.domain.dto.alarm.AlarmReadResponse;
 import com.first.bulletinboard.domain.dto.comment.CommentCreateRequest;
 import com.first.bulletinboard.domain.dto.comment.CommentDto;
 import com.first.bulletinboard.domain.dto.comment.CommentReadResponse;
 import com.first.bulletinboard.domain.dto.comment.CommentUpdateRequest;
 import com.first.bulletinboard.domain.dto.post.*;
-import com.first.bulletinboard.domain.entity.alarm.Alarm;
-import com.first.bulletinboard.domain.entity.alarm.AlarmType;
 import com.first.bulletinboard.domain.entity.comment.Comment;
 import com.first.bulletinboard.domain.entity.like.Like;
 import com.first.bulletinboard.domain.entity.post.Post;
@@ -15,7 +12,10 @@ import com.first.bulletinboard.domain.entity.user.User;
 import com.first.bulletinboard.domain.entity.user.UserRole;
 import com.first.bulletinboard.exception.AppException;
 import com.first.bulletinboard.exception.ErrorCode;
-import com.first.bulletinboard.exception.repository.*;
+import com.first.bulletinboard.repository.CommentRepository;
+import com.first.bulletinboard.repository.LikeRepository;
+import com.first.bulletinboard.repository.PostRepository;
+import com.first.bulletinboard.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -32,7 +32,8 @@ public class PostService {
     private final PostRepository postRepository;
     private final LikeRepository likeRepository;
     private final CommentRepository commentRepository;
-    private final AlarmRepository alarmRepository;
+
+    private final AlarmService alarmService;
     //-------------------------------------Post-------------------------------------//
 
     // post 생성
@@ -104,7 +105,7 @@ public class PostService {
         Post post = findPostById(postId);
 
         Comment savedComment = commentRepository.save(request.toEntity(user, post));
-        createCommentAlarm(savedComment); // comment 알람 생성
+        alarmService.createCommentAlarm(savedComment); // comment 알람 생성
         return savedComment.toDto();
     }
 
@@ -135,11 +136,11 @@ public class PostService {
         return comment.toDto();
     }
 
-    public Page<Comment> findAllComments(int postId, Pageable pageable) {
-        findPostById(postId);
-        return commentRepository.findAll(pageable);
+    public Page<CommentDto> findAllComments(int postId, Pageable pageable) {
+        Post post = findPostById(postId);
+        Page<Comment> comments = commentRepository.findAllByPost(post, pageable);
+        return CommentDto.toCommentList(comments);
     }
-
     /**
      * 접근 가능 조건
      * ADMIN or
@@ -160,7 +161,7 @@ public class PostService {
 
         if(isNotAlreadyPressed(user, post)) {
             Like like = likeRepository.save(new Like(user, post));
-            createLikeAlarm(like); // like 알람 생성
+            alarmService.createLikeAlarm(like); // like 알람 생성
             return true;
 
         } else throw new AppException(ErrorCode.ALREADY_PRESSED_LIKE);
@@ -175,37 +176,6 @@ public class PostService {
         return likeRepository.findByUserAndPost(user, post).isEmpty();
     }
 
-//-------------------------------------Alarm-------------------------------------//
-    // create
-    public void createCommentAlarm(Comment comment){
-        Alarm alarm = Alarm.builder().
-                alarmType(AlarmType.NEW_LIKE_ON_POST).
-                user(comment.getPost().getUser()).
-                fromUserId(comment.getUser().getId()).
-                targetId(comment.getPost().getId()).
-                text("new comment!").
-                build();
-        alarmRepository.save(alarm);
-    }
-    public void createLikeAlarm(Like like){
-        Alarm alarm = Alarm.builder().
-                alarmType(AlarmType.NEW_LIKE_ON_POST).
-                user(like.getPost().getUser()).
-                fromUserId(like.getUser().getId()).
-                targetId(like.getPost().getId()).
-                text("new like!").
-                build();
-        alarmRepository.save(alarm);
-    }
-
-    // read
-    public Page<Alarm> findAllAlarms(String userName, Pageable pageable){
-        User user = userRepository.findByUserName(userName)
-                .orElseThrow(()->{
-                    throw new AppException(ErrorCode.USERNAME_NOT_FOUND);
-                });
-        return alarmRepository.findAlarmsByUser(user,pageable);
-    }
 
     /**
      * 중복 제거

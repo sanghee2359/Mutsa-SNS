@@ -2,8 +2,8 @@ package com.first.bulletinboard;
 
 import com.first.bulletinboard.domain.entity.like.Like;
 import com.first.bulletinboard.domain.entity.post.Post;
-import com.first.bulletinboard.exception.repository.LikeRepository;
-import com.first.bulletinboard.exception.repository.PostRepository;
+import com.first.bulletinboard.repository.LikeRepository;
+import com.first.bulletinboard.repository.PostRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

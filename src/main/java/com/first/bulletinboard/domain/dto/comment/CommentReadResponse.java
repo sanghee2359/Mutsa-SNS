@@ -3,6 +3,7 @@ package com.first.bulletinboard.domain.dto.comment;
 import com.first.bulletinboard.domain.entity.comment.Comment;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
 public class CommentReadResponse {
     private Integer id;
     private String comment;
@@ -17,12 +19,12 @@ public class CommentReadResponse {
     private Integer postId;
     private LocalDateTime createdAt;
     private LocalDateTime lastModifiedAt;
-    public static CommentReadResponse of(Comment comment) {
+    public static CommentReadResponse of(CommentDto comment) {
         return CommentReadResponse.builder()
                 .id(comment.getId())
                 .comment(comment.getComment())
-                .userName(comment.getUser().getUsername())
-                .postId(comment.getPost().getId())
+                .userName(comment.getUserName())
+                .postId(comment.getPostId())
                 .createdAt(comment.getCreatedAt())
                 .lastModifiedAt(comment.getLastModifiedAt())
                 .build();

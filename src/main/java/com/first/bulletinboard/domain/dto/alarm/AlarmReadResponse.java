@@ -22,7 +22,7 @@ public class AlarmReadResponse {
     private String text;
     private LocalDateTime createdAt;
 
-    public static AlarmReadResponse of(Alarm alarm) {
+    public static AlarmReadResponse of(AlarmDto alarm) {
         return AlarmReadResponse.builder()
                 .id(alarm.getId())
                 .alarmType(alarm.getAlarmType())

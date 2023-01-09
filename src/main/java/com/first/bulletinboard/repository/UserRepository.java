@@ -1,4 +1,4 @@
-package com.first.bulletinboard.exception.repository;
+package com.first.bulletinboard.repository;
 
 import com.first.bulletinboard.domain.entity.user.User;
 import org.springframework.data.domain.Page;

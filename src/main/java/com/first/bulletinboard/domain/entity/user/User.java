@@ -2,6 +2,7 @@ package com.first.bulletinboard.domain.entity.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.first.bulletinboard.domain.dto.user.UserDto;
+import com.first.bulletinboard.domain.entity.alarm.Alarm;
 import com.first.bulletinboard.domain.entity.comment.Comment;
 import com.first.bulletinboard.domain.entity.like.Like;
 import com.first.bulletinboard.domain.entity.post.Post;
@@ -17,9 +18,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Builder
@@ -63,6 +62,10 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     @Builder.Default
     private List<Post> posts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    @Builder.Default
+    private Set<Alarm> alarms = new HashSet<>();
 
 
     public UserDto toUserDto() {
