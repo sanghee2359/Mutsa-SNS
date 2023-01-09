@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -18,8 +19,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "likes")
-@SQLDelete(sql="UPDATE likes SET deleted_at = current_timestamp WHERE id=?") // like를 삭제하는 sql문이 실행되어도 Update문이 실행 -> DB에는 남아있음.
-//@Where(clause = "deleted_at is NULL") // deleted_at이
+@SQLDelete(sql = "UPDATE likes SET deleted_at = current_timestamp WHERE id = ?")
+@Where(clause = "deleted_at is NULL")
 public class Like extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,11 +34,11 @@ public class Like extends BaseEntity {
     @JoinColumn(name="post_id")
     private Post post;
 
-    @Column(name = "deleted_at")
-    private LocalDateTime DeletedAt;
 
     public Like(User user, Post post) { // 생성자
         this.user = user;
         this.post = post;
     }
+
+
 }

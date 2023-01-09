@@ -6,6 +6,7 @@ import com.first.bulletinboard.domain.entity.user.User;
 import com.first.bulletinboard.domain.entity.user.UserRole;
 import com.first.bulletinboard.exception.AppException;
 import com.first.bulletinboard.exception.ErrorCode;
+import com.first.bulletinboard.repository.LikeRepository;
 import com.first.bulletinboard.repository.PostRepository;
 import com.first.bulletinboard.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class PostService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final LikeRepository likeRepository;
 
     // post 생성
     public PostDto createPost(PostCreateRequest request, String userName) {
@@ -67,7 +69,10 @@ public class PostService {
         User user = findUserByUserName(userName);
         Post deletePost = findPostById(postId);
 
-        if(isAccessible(deletePost, user)) postRepository.delete(deletePost);
+        if(isAccessible(deletePost, user)) {
+            postRepository.delete(deletePost);
+//            likeRepository.deleteById(deletePost.getId());
+        }
         else throw new AppException(ErrorCode.INVALID_PERMISSION);
 
         return deletePost.toPostDto();

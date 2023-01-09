@@ -49,7 +49,7 @@ public class UserService implements UserDetailsService {
                     .password(roleUser.getPassword())
                     .role(roleUser.getRole())
                     .updatedAt(roleUser.getUpdatedAt())
-                    .deletedAt(roleUser.getDeletedAt())
+                    .removedAt(roleUser.getRemovedAt())
                     .registeredAt(roleUser.getRegisteredAt())
                     .build();
             return authUser;

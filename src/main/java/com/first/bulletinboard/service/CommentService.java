@@ -79,7 +79,7 @@ public class CommentService {
                 .orElseThrow(()->{
                     throw new RuntimeException();
                 });
-        if(!isAccessible(comment, user))
+        if(!isAccessible(comment, user) || comment.getDeletedAt() == null)
             throw new AppException(ErrorCode.INVALID_PERMISSION);
 
         // 삭제

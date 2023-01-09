@@ -29,4 +29,7 @@ public class BaseEntity {
     @Column
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastModifiedAt;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt = null;
 }
