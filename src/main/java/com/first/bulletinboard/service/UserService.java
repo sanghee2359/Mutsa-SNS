@@ -6,7 +6,7 @@ import com.first.bulletinboard.domain.dto.user.UserJoinRequest;
 import com.first.bulletinboard.domain.entity.user.UserRole;
 import com.first.bulletinboard.exception.AppException;
 import com.first.bulletinboard.exception.ErrorCode;
-import com.first.bulletinboard.repository.UserRepository;
+import com.first.bulletinboard.exception.repository.UserRepository;
 import com.first.bulletinboard.utils.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

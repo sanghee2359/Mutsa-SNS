@@ -31,5 +31,5 @@ public class BaseEntity {
     private LocalDateTime lastModifiedAt;
 
     @Column(name = "deleted_at")
-    private LocalDateTime deletedAt = null;
+    private LocalDateTime deletedAt;
 }

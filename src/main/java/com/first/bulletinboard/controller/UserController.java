@@ -41,8 +41,10 @@ public class UserController {
 
     @ApiOperation(value = "user 조회", notes = "ADMIN만 접근 가능합니다")
     @GetMapping
-    public Response<Page<UserListResponse>> findUserList(@PageableDefault(size = 20, sort = "createdAt") Pageable pageable){
+    public Response<Page<UserReadResponse>> findUserList(@PageableDefault(size = 20, sort = "createdAt") Pageable pageable){
         Page<UserDto> users = userService.findAllUser(pageable);
-        return Response.success(users.map(UserListResponse::of));
+        return Response.success(users.map(UserReadResponse::of));
     }
+
+
 }

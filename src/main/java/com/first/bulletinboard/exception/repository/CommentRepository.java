@@ -1,4 +1,4 @@
-package com.first.bulletinboard.repository;
+package com.first.bulletinboard.exception.repository;
 
 import com.first.bulletinboard.domain.entity.comment.Comment;
 import org.springframework.data.domain.Page;

@@ -10,13 +10,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Getter
-public class UserListResponse {
+public class UserReadResponse {
     private int id;
     private String userName;
     private UserRole role;
 
-    public static UserListResponse of(UserDto dto) {
-        UserListResponse response = UserListResponse.builder()
+    public static UserReadResponse of(UserDto dto) {
+        UserReadResponse response = UserReadResponse.builder()
                 .id(dto.getId())
                 .userName(dto.getUserName())
                 .role(dto.getRole())
