@@ -8,7 +8,7 @@
 - 회원가입, 로그인, 글쓰기, 조회, 수정, 삭제, 알람, 좋아요, 댓글 기능
 - [Swagger-ui](http://ec2-3-38-172-197.ap-northeast-2.compute.amazonaws.com:8080/swagger-ui/#/)
 ---
-<br>
+
 ## 🥇 요구사항
 #### 기술 스택
 - 에디터 : Intellij Ultimate
@@ -22,7 +22,8 @@
 
 #### EndPoint
 <img src="src/main/resources/images/endpoint.png" width="600" height="483"/>
-<br>
+---
+
 ## 🥈 기능 구현
 ### 인프라
 - [x] EC2 생성 및 도커 설치
@@ -57,7 +58,7 @@
 
 ### UI
 - [ ] 화면ui 설정
-<br>
+---
 
 
 ## 🥉구조 
