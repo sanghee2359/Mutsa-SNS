@@ -37,4 +37,4 @@ public class Alarm extends BaseEntity{
     private Integer targetId; // post.id
     private String text;
 
-    }
+}

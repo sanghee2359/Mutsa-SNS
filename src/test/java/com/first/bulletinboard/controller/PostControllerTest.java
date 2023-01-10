@@ -169,6 +169,7 @@ class PostControllerTest {
         List<PostDto> posts = new ArrayList<>();
         posts.add(postDto1);
         posts.add(postDto2);
+
         PageRequest pageable = PageRequest.of(0,20,Sort.by("createdAt").descending());
         Page<PostDto> postList = new PageImpl<>(posts, pageable, 2);
         when(postService.findAllPost(any(Pageable.class))).thenReturn(postList);
@@ -196,24 +197,16 @@ class PostControllerTest {
     @WithMockUser
     @DisplayName("[GET] 포스트 1개 조회 성공 - id, title, body, userName 검증")
     void read_one_post_success() throws Exception {
-        // given
-        PostDto postDto = PostDto.builder()
-                .id(1)
-                .title("title")
-                .body("body")
-                .userName("userName")
-                .build();
-
         // when
         when(postService.findByPostId(anyInt()))
-                .thenReturn(postDto);
+                .thenReturn(postDto1);
         // then
         mockMvc.perform(get("/api/v1/posts/1")
                         .with(csrf()))
                 .andExpect(jsonPath("$.result.id").value(1))
-                .andExpect(jsonPath("$.result.title").value("title"))
-                .andExpect(jsonPath("$.result.body").value("body"))
-                .andExpect(jsonPath("$.result.userName").value("userName"))
+                .andExpect(jsonPath("$.result.title").value("title1"))
+                .andExpect(jsonPath("$.result.body").value("body1"))
+                .andExpect(jsonPath("$.result.userName").value("user"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -229,7 +222,7 @@ class PostControllerTest {
         PostUpdateRequest request = PostUpdateRequest.builder().title("title").body("body").build();
 
         // when
-        when(postService.updateById(anyInt(),any(),any())).thenReturn(PostDto.builder().id(1).build());
+        when(postService.updateById(anyInt(),any(),any())).thenReturn(postDto1);
 
         // then
         mockMvc.perform(put("/api/v1/posts/1")
@@ -305,7 +298,7 @@ class PostControllerTest {
     @WithMockUser
     @DisplayName("[DELETE] 포스트 삭제 성공")
     void delete_post_success() throws Exception {
-        when(postService.deleteById(anyInt(),any())).thenReturn(PostDto.builder().id(1).build());
+        when(postService.deleteById(anyInt(),any())).thenReturn(postDto1);
 
         mockMvc.perform(delete("/api/v1/posts/1")
                         .with(csrf())
@@ -414,16 +407,9 @@ class PostControllerTest {
     @WithMockUser
     @DisplayName("[POST] comment 작성 성공")
     void create_comment_success() throws Exception {
-        CommentDto dto = CommentDto.builder()
-                .id(1)
-                .comment("comment1")
-                .userName("userName")
-                .postId(1)
-                .build();
-
         CommentCreateRequest request = new CommentCreateRequest("comment1");
         when(postService.createComment(anyInt(),any(),any()))
-                .thenReturn(dto);
+                .thenReturn(commentDto1);
 
         mockMvc.perform(post("/api/v1/posts/{postId}/comments", 1)
                         .with(csrf())
@@ -431,7 +417,8 @@ class PostControllerTest {
                         .content(objectMapper.writeValueAsBytes(request)))
                 .andExpect(jsonPath("$.resultCode").exists())
                 .andExpect(jsonPath("$.result.id").value(1))
-                .andExpect(jsonPath("$.result.userName").value("userName"))
+                .andExpect(jsonPath("$.result.userName").value("user"))
+                .andExpect(jsonPath("$.result.postId").value(1))
                 .andExpect(status().isOk())
                 .andDo(print());
     }
@@ -439,16 +426,9 @@ class PostControllerTest {
     @WithAnonymousUser
     @DisplayName("[POST] 댓글 작성 실패(1) - 인증 실패 - JWT를 Bearer Token으로 보내지 않은 경우")
     void create_comment_fail1() throws Exception {
-        CommentDto dto = CommentDto.builder()
-                .id(1)
-                .comment("comment1")
-                .userName("userName")
-                .postId(1)
-                .build();
-
         CommentCreateRequest request = new CommentCreateRequest("comment1");
         when(postService.createComment(anyInt(),any(),any()))
-                .thenReturn(dto);
+                .thenReturn(commentDto1);
 
         // given -> errorCode
         given(postService.createComment(anyInt(), any(),any()))
@@ -466,16 +446,9 @@ class PostControllerTest {
     @WithMockUser
     @DisplayName("[POST] 포스트 작성 실패(2) - 인증 실패 - JWT가 유효하지 않은 경우")
     void create_comment_fail2() throws Exception {
-        CommentDto dto = CommentDto.builder()
-                .id(1)
-                .comment("comment1")
-                .userName("userName")
-                .postId(1)
-                .build();
-
         CommentCreateRequest request = new CommentCreateRequest("comment1");
         when(postService.createComment(anyInt(),any(),any()))
-                .thenReturn(dto);
+                .thenReturn(commentDto1);
 
         when(postService.createComment(anyInt(), any(),any())).thenThrow(new AppException(ErrorCode.POST_NOT_FOUND, ""));
 
@@ -495,16 +468,10 @@ class PostControllerTest {
     @DisplayName("[PUT] 댓글 수정 성공")
     void update_comment_success() throws Exception {
         // given
-        CommentDto dto = CommentDto.builder()
-                .id(1)
-                .comment("updatedComment")
-                .userName("userName")
-                .postId(1)
-                .build();
-        CommentUpdateRequest request = CommentUpdateRequest.builder().comment("updatedComment").build();
+        CommentUpdateRequest request = CommentUpdateRequest.builder().comment("comment1").build();
 
         // when
-        when(postService.updateComment(anyInt(),anyInt(),any(),any())).thenReturn(dto);
+        when(postService.updateComment(anyInt(),anyInt(),any(),any())).thenReturn(commentDto1);
 
         // then
         mockMvc.perform(put("/api/v1/posts/1/comments/1")
@@ -512,7 +479,7 @@ class PostControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(request)))
                 .andExpect(jsonPath("$.resultCode").exists())
-                .andExpect(jsonPath("$.result.comment").value("updatedComment"))
+                .andExpect(jsonPath("$.result.comment").value("comment1"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -520,7 +487,7 @@ class PostControllerTest {
     @WithAnonymousUser
     @DisplayName("[PUT] 포스트 수정 실패(1) : 인증 실패")
     void update_comment_fail1() throws Exception {
-        CommentUpdateRequest request = CommentUpdateRequest.builder().comment("updatedComment").build();
+        CommentUpdateRequest request = CommentUpdateRequest.builder().comment("comment1").build();
 
         // given -> errorCode
         given(postService.updateComment(anyInt(),anyInt(),any(),any()))
@@ -539,7 +506,7 @@ class PostControllerTest {
     @WithMockUser
     @DisplayName("[PUT] 포스트 수정 실패(1) : Post 없는 경우")
     void update_comment_fail2() throws Exception {
-        CommentUpdateRequest request = CommentUpdateRequest.builder().comment("updatedComment").build();
+        CommentUpdateRequest request = CommentUpdateRequest.builder().comment("comment1").build();
 
         // given -> errorCode
         given(postService.updateComment(anyInt(),anyInt(),any(),any()))
@@ -557,7 +524,7 @@ class PostControllerTest {
     @WithMockUser
     @DisplayName("[PUT] 포스트 수정 실패(3) : 작성자 불일치")
     void update_comment_fail3() throws Exception {
-        CommentUpdateRequest request = CommentUpdateRequest.builder().comment("updatedComment").build();
+        CommentUpdateRequest request = CommentUpdateRequest.builder().comment("comment1").build();
 
         // given -> errorCode
         given(postService.updateComment(anyInt(),anyInt(),any(),any()))
@@ -577,7 +544,7 @@ class PostControllerTest {
     @WithMockUser
     @DisplayName("[PUT] 포스트 수정 실패(4) : 데이터베이스 에러")
     void update_comment_fail4() throws Exception {
-        CommentUpdateRequest request = CommentUpdateRequest.builder().comment("updatedComment").build();
+        CommentUpdateRequest request = CommentUpdateRequest.builder().comment("comment1").build();
 
 
         // given -> errorCode
@@ -601,14 +568,7 @@ class PostControllerTest {
     @WithMockUser
     @DisplayName("[DELETE] 댓글 삭제 성공")
     void delete_comment_success() throws Exception {
-        // given
-        CommentDto dto = CommentDto.builder()
-                .id(1)
-                .comment("updatedComment")
-                .userName("userName")
-                .postId(1)
-                .build();
-        when(postService.deleteComment(anyInt(),anyInt(),any())).thenReturn(dto);
+        when(postService.deleteComment(anyInt(),anyInt(),any())).thenReturn(commentDto1);
 
         mockMvc.perform(delete("/api/v1/posts/1/comments/1")
                         .with(csrf())
