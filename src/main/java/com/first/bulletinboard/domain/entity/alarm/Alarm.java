@@ -1,6 +1,8 @@
 package com.first.bulletinboard.domain.entity.alarm;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.first.bulletinboard.domain.dto.alarm.AlarmDto;
+import com.first.bulletinboard.domain.dto.post.PostDto;
 import com.first.bulletinboard.domain.entity.BaseEntity;
 import com.first.bulletinboard.domain.entity.comment.Comment;
 import com.first.bulletinboard.domain.entity.user.User;
@@ -35,4 +37,4 @@ public class Alarm extends BaseEntity{
     private Integer targetId; // post.id
     private String text;
 
-}
+    }

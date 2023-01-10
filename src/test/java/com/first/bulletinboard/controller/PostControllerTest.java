@@ -1,18 +1,17 @@
 package com.first.bulletinboard.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.first.bulletinboard.domain.Response;
 import com.first.bulletinboard.domain.dto.comment.CommentCreateRequest;
-import com.first.bulletinboard.domain.dto.comment.CommentDeleteResponse;
 import com.first.bulletinboard.domain.dto.comment.CommentDto;
 import com.first.bulletinboard.domain.dto.comment.CommentUpdateRequest;
 import com.first.bulletinboard.domain.dto.post.*;
-import com.first.bulletinboard.domain.dto.user.UserLoginRequest;
 import com.first.bulletinboard.domain.entity.comment.Comment;
 import com.first.bulletinboard.domain.entity.post.Post;
+import com.first.bulletinboard.domain.entity.user.User;
 import com.first.bulletinboard.exception.AppException;
 import com.first.bulletinboard.exception.ErrorCode;
+import com.first.bulletinboard.repository.CommentRepository;
+import com.first.bulletinboard.repository.PostRepository;
 import com.first.bulletinboard.service.PostService;
 import com.first.bulletinboard.service.UserService;
 import com.first.bulletinboard.utils.JwtTokenUtil;
@@ -32,10 +31,14 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -49,6 +52,10 @@ class PostControllerTest {
     MockMvc mockMvc;
     @MockBean
     PostService postService;
+    @MockBean
+    PostRepository postRepository;
+    @MockBean
+    CommentRepository commentRepository;
     @MockBean
     UserService userService;
     @Autowired
@@ -73,6 +80,18 @@ class PostControllerTest {
         long expireTimeMs = 1000 * 60 * 60;
         token = JwtTokenUtil.createToken("user", secretKey, expireTimeMs);
     }
+    User user = User.builder().id(1).userName("user").password("password").build();
+    Post post1 = Post.builder().id(1).title("title1").body("body1").user(user).build();
+    Post post2 = Post.builder().id(2).title("title2").body("body2").user(user).build();
+
+    PostDto postDto1 = post1.toPostDto();
+    PostDto postDto2 = post2.toPostDto();
+
+    Comment comment1 = Comment.builder().id(1).comment("comment1").user(user).post(post1).build();
+    Comment comment2 = Comment.builder().id(2).comment("comment2").user(user).post(post1).build();
+    CommentDto commentDto1 = comment1.toDto();
+    CommentDto commentDto2 = comment2.toDto();
+
 
     //-------------------------------------Post-------------------------------------//
     /**
@@ -140,13 +159,21 @@ class PostControllerTest {
     /**
      * read test
      */
-    @Test // error -> body가 null이다.
+    @Test
     @WithMockUser
     @DisplayName("[GET] postList 조회 성공 - 0번이 1번보다 날짜가 최신")
     void read_postList_success() throws Exception {
+        // given
+        postRepository.save(post1);
+        postRepository.save(post2);
+        List<PostDto> posts = new ArrayList<>();
+        posts.add(postDto1);
+        posts.add(postDto2);
+        PageRequest pageable = PageRequest.of(0,20,Sort.by("createdAt").descending());
+        Page<PostDto> postList = new PageImpl<>(posts, pageable, 2);
+        when(postService.findAllPost(any(Pageable.class))).thenReturn(postList);
 
-        when(postService.findAllPost(any())).thenReturn(mock(Page.class)); //
-
+        // when
         mockMvc.perform(get("/api/v1/posts")
                         .with(csrf())
                         .param("size","20")
@@ -154,6 +181,7 @@ class PostControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk());
 
+        //then
         // parameter을 캡쳐하는 클래스
         ArgumentCaptor<Pageable> pageableArgumentCaptor = ArgumentCaptor.forClass(Pageable.class);
 
@@ -161,7 +189,7 @@ class PostControllerTest {
         PageRequest pageRequest = (PageRequest) pageableArgumentCaptor.getValue();
 
         assertEquals(20, pageRequest.getPageSize());
-        assertEquals(Sort.by("createdAt", "DESC"), pageRequest.withSort(Sort.by("createdAt", "DESC")).getSort());
+        assertEquals(Sort.by(DESC,"createdAt"), pageRequest.getSort());
     }
 
     @Test
@@ -339,32 +367,31 @@ class PostControllerTest {
      * my feed test
      */
 
-
-    /*@Test -> 마찬가지로 body가 null
+    @Test
     @WithMockUser
     @DisplayName("[GET] 마이피드 조회 성공")
     void myfeed_success() throws Exception {
-        PostDto dto = PostDto.builder()
-                .id(1)
-                .title("title")
-                .body("content")
-                .userName("sanghee")
-                .build();
+        postRepository.save(post1);
+        postRepository.save(post2);
+        List<PostDto> posts = new ArrayList<>();
+        posts.add(postDto1);
+        posts.add(postDto2);
+        PageRequest pageable = PageRequest.of(0,20,Sort.by("createdAt").descending());
+        Page<PostDto> postList = new PageImpl<>(posts, pageable, 2);
+        when(postService.findMyFeed(any(),any(Pageable.class))).thenReturn(postList);
 
-        given(postService.findMyFeed(any(),any())).willReturn();
-        when(postService.findMyFeed(any(),any())).thenReturn(mock(Page.class));
         mockMvc.perform(get("/api/v1/posts/my")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("size","20")
                         .param("sort","createdAt,desc"))
                 .andExpect(jsonPath("$.result.content[0].id").value(1))
-                .andExpect(jsonPath("$.result.content[0].title").value("title"))
-                .andExpect(jsonPath("$.result.content[0].body").value("content"))
-                .andExpect(jsonPath("$.result.content[0].userName").value("sanghee"))
+                .andExpect(jsonPath("$.result.content[0].title").value("title1"))
+                .andExpect(jsonPath("$.result.content[0].body").value("body1"))
+                .andExpect(jsonPath("$.result.content[0].userName").value("user"))
                 .andDo(print())
                 .andExpect(status().isOk());
-    }*/
+    }
 
     @Test
     @WithMockUser
@@ -650,23 +677,25 @@ class PostControllerTest {
     @WithMockUser
     @DisplayName("[GET] 댓글 목록 조회 성공")
     void read_commentList_success() throws Exception {
-        when(postService.findAllComments(anyInt(),any())).thenReturn(mock(Page.class)); //
+        commentRepository.save(comment1);
+        commentRepository.save(comment2);
+        List<CommentDto> comments = new ArrayList<>();
+        comments.add(commentDto1);
+        comments.add(commentDto2);
+        PageRequest pageable = PageRequest.of(0,20,Sort.by("createdAt").descending());
+        Page<CommentDto> commentList = new PageImpl<>(comments, pageable, 2);
+        when(postService.findAllComments(anyInt(),any(Pageable.class))).thenReturn(commentList);
 
         mockMvc.perform(get("/api/v1/posts/1/comments")
                         .with(csrf())
                         .param("size","20")
                         .param("sort","createdAt,desc"))
+                .andExpect(jsonPath("$.result.content[0].id").value(1))
+                .andExpect(jsonPath("$.result.content[0].comment").value("comment1"))
+                .andExpect(jsonPath("$.result.content[0].userName").value("user"))
+                .andExpect(jsonPath("$.result.content[0].postId").value(1))
                 .andDo(print())
                 .andExpect(status().isOk());
-
-        // parameter을 캡쳐하는 클래스
-        ArgumentCaptor<Pageable> pageableArgumentCaptor = ArgumentCaptor.forClass(Pageable.class);
-
-        verify(postService).findAllComments(1,pageableArgumentCaptor.capture());
-        PageRequest pageRequest = (PageRequest) pageableArgumentCaptor.getValue();
-
-        assertEquals(20, pageRequest.getPageSize());
-        assertEquals(Sort.by("createdAt", "DESC"), pageRequest.withSort(Sort.by("createdAt", "DESC")).getSort());
     }
 
     //-------------------------------------Like-------------------------------------//
