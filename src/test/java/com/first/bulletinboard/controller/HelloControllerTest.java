@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @WebMvcTest(HelloController.class)
 class HelloControllerTest {
-    /*@Autowired
+    @Autowired
     MockMvc mockMvc;
     @MockBean
     AlgorithmService algorithmService;
@@ -28,10 +28,10 @@ class HelloControllerTest {
     void hello() throws Exception {
         when(algorithmService.sumOfDigit(687))
                 .thenReturn(21);
-        mockMvc.perform(get("/api/v1/hello"))
-                 .with(csrf())
+        mockMvc.perform(get("/api/v1/hello")
+                        .with(csrf()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("정상희"));
-    }*/
+    }
 }
