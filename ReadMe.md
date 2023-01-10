@@ -65,12 +65,13 @@
 ## 🥉구조 
 #### ERD
 <img src="src/main/resources/images/erd_1.png" width="515" height="769"/>
+
 #### Architecture
 - 레이어드 아키텍처
     - 역할에 따라 독립된 모듈로 나누어서 구성하는 패턴입니다. 
     - 각 모듈이 서로의 의존도에 따라 층층히 쌓듯이 연결되어서 전체의 시스템을 구현하는 구조
     - 특징 : 단방향 의존성. 각각의 레이어는 오직 자기보다 하위에 있는 레이어에만 의존
-<img src="src/main/resources/images/layerArchitecture.png" width="780" height="156"/>
+<img src="src/main/resources/images/layerArchitecture.png" width="600" height="120"/>
 
 ## 💬 회고
 #### 신경 쓴 부분
@@ -91,6 +92,6 @@ UI 완성 시켜보기
 
  
 #### 느낀점
- 1주차와 비교해 헤매는 시간이 줄었다. 낯선 에러들을 만났을 때 구글링하는 법을 조금이나마 터득한 것 같다.
+1주차와 비교해 헤매는 시간이 줄었다. 낯선 에러들을 만났을 때 구글링하는 법을 조금이나마 터득한 것 같다.
 
 한편 테스트 코드 작성에 어려움을 느꼈는데, 추가적으로 JUnit을 공부하면서 익숙해질 때까지 만들어보는 노력이 필요할 것  같다.
