@@ -8,7 +8,7 @@
 - 회원가입, 로그인, 글쓰기, 조회, 수정, 삭제, 알람, 좋아요, 댓글 기능
 - [Swagger-ui](http://ec2-3-38-172-197.ap-northeast-2.compute.amazonaws.com:8080/swagger-ui/#/)
 ---
-### 프로젝트 설명
+## 프로젝트 설명
 #### 🥇 기술 스택
 - 에디터 : Intellij Ultimate
 - 개발 툴 : SpringBoot 2.7.5
@@ -25,17 +25,35 @@
 #### 🥉 EndPoint
 <img src="src/main/resources/images/endpoint.png" width="600" height="483"/>
 
-### 프로젝트 구현 과정
-- [ ] gitlab 배포파일 및 ec2 크론탭 설정
-- [ ] swagger 문서화 설정
-- [ ] 회원가입과 로그인
-- jwt token 설정
-- [ ] 게시글 CRUD
-- [ ] 댓글 기능 구현
-- [ ] admin 권한 (Role 역할) 구현
-- [ ] 좋아요 기능 구현
-- [ ] 테스트 코드 작성하기
-- [ ] 마이피드 기능 구현
-- [ ] 알람 기능 구현
+## 구현 과정
+### 인프라
+- [x] EC2 생성 및 도커 설치
+- [x] gitlab 배포파일 및 ec2 크론탭 설정
+
+### DataBase
+- [x] Mysql 구축
+- [x] DB 설계
+
+### Swagger UI 
+- [x] swagger 설정
+- [x] Spring Security에 적용
+
+### Spring Security + JWT 
+- [x] 회원가입과 로그인
+- [x] admin 권한 (Role 역할) 구현
+
+### Spring Boot
+- [x] 게시글 CRUD
+- [x] 댓글 기능 구현
+- [x] 좋아요 기능 구현
+- [x] 마이피드 기능 구현
+- [x] 알람 기능 구현
+
+### Test Code
+- [x] controller 테스트 코드
+    - user, post, like, comment, alarm
+- [ ] service 테스트 코드 
+
+### UI
 - [ ] 화면ui 설정
 
