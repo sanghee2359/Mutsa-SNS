@@ -28,8 +28,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @Slf4j
 public class PostService {
-    private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
     private final LikeRepository likeRepository;
     private final CommentRepository commentRepository;
 
@@ -155,14 +155,14 @@ public class PostService {
 
 
     // 좋아요 누르기
-    public boolean pressLike(int postId, String userName) {
+    public Like pressLike(int postId, String userName) {
         User user = findUserByUserName(userName);
         Post post = findPostById(postId);
 
         if(isNotAlreadyPressed(user, post)) {
             Like like = likeRepository.save(new Like(user, post));
             alarmService.createLikeAlarm(like); // like 알람 생성
-            return true;
+            return like;
 
         } else throw new AppException(ErrorCode.ALREADY_PRESSED_LIKE);
     }

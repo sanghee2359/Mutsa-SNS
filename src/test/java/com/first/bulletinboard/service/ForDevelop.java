@@ -1,4 +1,4 @@
-package com.first.bulletinboard;
+package com.first.bulletinboard.service;
 
 import com.first.bulletinboard.domain.entity.like.Like;
 import com.first.bulletinboard.domain.entity.post.Post;
