@@ -22,7 +22,7 @@
 - 필수 라이브러리 : SpringBoot Web, MySQL, Spring Data JPA, Lombok, Spring Security
 
 #### EndPoint
-<img src="src/main/resources/images/endpoint.png" width="600" height="483"/>
+<p><img src="src/main/resources/images/endpoint.png" width="600" height="483"/></p>
 ---
 
 ## 🥈 기능 구현
@@ -64,7 +64,7 @@
 
 ## 🥉구조 
 #### ERD
-<img src="src/main/resources/images/erd_1.png" width="515" height="769"/>
+<p><img src="src/main/resources/images/erd_1.png" width="515" height="769"/></p>
 
 
 ## 💬 회고
