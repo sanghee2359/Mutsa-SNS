@@ -22,7 +22,7 @@
 - 필수 라이브러리 : SpringBoot Web, MySQL, Spring Data JPA, Lombok, Spring Security
 
 #### EndPoint
-<p><img src="src/main/resources/images/endpoint.png" width="600" height="483"/></p>
+<p align="center"><img src="src/main/resources/images/endpoint.png" width="600" height="483"/></p>
 ---
 
 ## 🥈 기능 구현
@@ -64,10 +64,11 @@
 
 ## 🥉구조 
 #### ERD
-<p><img src="src/main/resources/images/erd_1.png" width="515" height="769"/></p>
+<p align="center"><img src="src/main/resources/images/erd_1.png" width="515" height="769"/></p>
 
 
 ## 💬 회고
 #### 신경 쓴 부분
+Dto 설계를 할 때 하나의 클래스가 한 가지 기능만 갖는 단일 책임 원칙을 지키게끔 만들어보았습니다.
 #### 개선사항
 #### 느낀점
