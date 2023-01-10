@@ -81,7 +81,8 @@ Dto 설계를 할 때 하나의 클래스가 한 가지 기능만 갖는 단일 
 #### 개선사항
 Controller list 조회 test code
 - 인접한 service 레이어가 아닌 repository 객체를 사용했는데 이 부분 리팩토링이 필요하다.
-- Controller에서 페이징 처리된 로직을 테스트 하기 위해 PageImpl을 이용해 직접 만들어 주었는데, null Pointer 에러를 피하기 위해 repository에 직접 save해주었다.
+- Controller에서 페이징 처리된 로직을 테스트 하기 위해 PageImpl을 이용해 직접 Page<dto> 객체를 만들어 주었는데,
+이때 null Pointer 에러가 발생했고 이것을 피해주기 위해 임시로 repository에 직접 save해주었다.
 
 #### 추가사항
 Service test 코드 완성
