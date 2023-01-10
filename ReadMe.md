@@ -36,18 +36,18 @@
 
 ### Swagger UI 
 - [x] swagger 설정
-- [x] Spring Security에 적용
+- [x] Spring Security에 적용 `SecurityFilterChain`
 
 ### Spring Security + JWT 
 - [x] 회원가입과 로그인
-- [x] admin 권한 (Role 역할) 구현
+- [x] admin 권한 (Role 역할) 구현 `enum`
 
 ### Spring Boot
 - [x] 게시글 CRUD 구현
 - [x] 댓글 CRUD 구현
 - [x] 좋아요 누르기, 조회 기능 구현
 - [x] 마이피드 기능 구현
-- [x] 알람 기능 구현(`좋아요`, `댓글`)
+- [x] 알람 기능 구현 (alarmType `enum` > `좋아요`, `댓글`)
 - [x] Entity에 soft delete 적용
 - [x] 예외 처리 `@exceptionHandler`
 - [x] Jpa Auditing
@@ -64,11 +64,33 @@
 
 ## 🥉구조 
 #### ERD
-<img src="src/main/resources/images/erd_1.png" width="515" height="769" align="center"/>
-
+<img src="src/main/resources/images/erd_1.png" width="515" height="769"/>
+#### Architecture
+- 레이어드 아키텍처
+    - 역할에 따라 독립된 모듈로 나누어서 구성하는 패턴입니다. 
+    - 각 모듈이 서로의 의존도에 따라 층층히 쌓듯이 연결되어서 전체의 시스템을 구현하는 구조
+    - 특징 : 단방향 의존성. 각각의 레이어는 오직 자기보다 하위에 있는 레이어에만 의존
+<img src="src/main/resources/images/layerArchitecture.png" width="780" height="156"/>
 
 ## 💬 회고
 #### 신경 쓴 부분
-Dto 설계를 할 때 하나의 클래스가 한 가지 기능만 갖는 단일 책임 원칙을 지키게끔 만들어보았습니다.
+Dto 설계를 할 때 하나의 클래스가 한 가지 기능만 갖는 단일 책임 원칙을 지키게끔 만들어보았다.
+- request dto, response dto
+- service controller 사이에서 변환하는 dto
 #### 개선사항
+Controller list 조회 test code
+- 인접한 service 레이어가 아닌 repository 객체를 사용했는데 이 부분 리팩토링이 필요하다.
+- Controller에서 페이징 처리된 로직을 테스트 하기 위해 PageImpl을 이용해 직접 만들어 주었는데, null Pointer 에러를 피하기 위해 repository에 직접 save해주었다.
+
+#### 추가사항
+Service test 코드 완성
+- TestInfoFixture을 사용해서 작성해볼 것
+
+UI 완성 시켜보기
+- 리액트를 이용해서 만들어 볼 것
+
+ 
 #### 느낀점
+ 1주차와 비교해 헤매는 시간이 줄었다. 낯선 에러들을 만났을 때 구글링하는 법을 조금이나마 터득한 것 같다.
+
+한편 테스트 코드 작성에 어려움을 느꼈는데, 추가적으로 JUnit을 공부하면서 익숙해질 때까지 만들어보는 노력이 필요할 것  같다.
