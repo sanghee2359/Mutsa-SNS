@@ -26,7 +26,7 @@
 ---
 
 ## 🥈 기능 구현
-### 인프라
+### Infra
 - [x] EC2 생성 및 도커 설치
 - [x] gitlab 배포파일 및 ec2 크론탭 설정
 
@@ -40,14 +40,14 @@
 
 ### Spring Security + JWT 
 - [x] 회원가입과 로그인
-- [x] admin 권한 (Role 역할) 구현 `enum`
+- [x] admin 권한 구현 (UserRole`enum` > `ADMIN`, `USER`)
 
 ### Spring Boot
 - [x] 게시글 CRUD 구현
 - [x] 댓글 CRUD 구현
 - [x] 좋아요 누르기, 조회 기능 구현
 - [x] 마이피드 기능 구현
-- [x] 알람 기능 구현 (alarmType `enum` > `좋아요`, `댓글`)
+- [x] 알람 기능 구현 (AlarmType `enum` > `좋아요`, `댓글`)
 - [x] Entity에 soft delete 적용
 - [x] 예외 처리 `@exceptionHandler`
 - [x] Jpa Auditing
@@ -85,11 +85,11 @@ Controller 조회`Page` test code
 - 때문에 이 에러를 피하기 위해서 repository객체를 통해 직접 save해주었다.
 
 #### 추가사항
-Service test 코드 완성
+Service test 코드 완성하기
 - TestInfoFixture을 사용해서 작성
 
 UI 완성 시켜보기
-- 리액트를 이용해서 만들기
+- 리액트 사용해서 작성
 
  
 #### 느낀점
