@@ -75,11 +75,11 @@
 
 ## 💬 회고
 #### 신경 쓴 부분
-Dto 설계를 할 때 하나의 클래스가 한 가지 기능만 갖는 단일 책임 원칙을 지키게끔 만들어보았다.
+Dto 설계를 할 때 하나의 클래스가 한 가지 기능만 갖는 `단일 책임 원칙`을 지킬 수 있도록 만들어봤다.
 - request dto, response dto
 - service controller 사이에서 변환하는 dto
 #### 개선사항
-Controller list 조회 test code
+Controller 조회`Page` test code 
 - 인접한 service 레이어가 아닌 repository 객체를 사용했는데 이 부분 리팩토링이 필요하다.
 - Controller에서 페이징 처리된 로직을 테스트 하기 위해 PageImpl을 이용해 직접 Page<dto> 객체를 만들어 주었는데,이때 null Pointer 에러가 발생했다.
 - 때문에 이 에러를 피하기 위해서 repository객체를 통해 직접 save해주었다.
