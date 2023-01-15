@@ -6,6 +6,9 @@ plugins {
 	// jacoco
 	id 'jacoco' // 이 부분 추가
 }
+jacoco {
+	toolVersion = '0.8.8'   // 이 부분 전체 추가
+}
 
 group = 'com.first'
 version = '0.0.1-SNAPSHOT'
@@ -48,14 +51,12 @@ dependencies {
 //tasks.named('test') {
 //	useJUnitPlatform()
 //}
+
 test {
 	useJUnitPlatform()				// JUnit5를 사용하기 위한 설정
 	finalizedBy 'jacocoTestReport'  // Test 이후 커버리지가 동작하도록 finalizedBy 추가
 }
 
-jacoco {
-	toolVersion = '0.8.8'   // 이 부분 전체 추가
-}
 // 코드 커버리지 진행 후 결과를 리포트로 저장
 jacocoTestReport {
 	dependsOn test
@@ -97,7 +98,7 @@ jacocoTestCoverageVerification {
 
 			// 라인 커버리지 제한을 80%로 설정
 			limit {
-				counter = 'LINE'
+				counter = 'LINE' // line 하나씩 다
 				value = 'COVEREDRATIO'
 				minimum = 0.80
 			}
@@ -116,13 +117,13 @@ jacocoTestCoverageVerification {
 				maximum = 200
 			}
 			excludes = [
-					'**/FirstmissionBulletinBoardApplication*',
-					'**/*Request*',
-					'**/*Response*',
-					'**/Hello*',
-					'**/Swagger*',
-					'**/EncrypterConfig*',
-					'**/JpaAuditingConfig*'
+					'**.*FirstmissionBulletinBoardApplication*',
+					'**.*Request*',
+					'**.*Response*',
+					'**.*Hello*',
+					'***.*Swagger*',
+					'**.*EncrypterConfig*',
+					'**.*JpaAuditingConfig*'
 			]
 		}
 	}
