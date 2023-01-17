@@ -15,14 +15,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 public class AlarmReadResponse {
-    private int id;
+    private Long id;
     private AlarmType alarmType;
-    private Integer fromUserId;// 알림을 발생시킨 user id)
-    private Integer targetId;// 알림이 발생된 post id)
+    private Long fromUserId;// 알림을 발생시킨 user id)
+    private Long targetId;// 알림이 발생된 post id)
     private String text;
     private LocalDateTime createdAt;
 
-    public static AlarmReadResponse of(AlarmDto alarm) {
+    public static AlarmReadResponse of(Alarm alarm) {
         return AlarmReadResponse.builder()
                 .id(alarm.getId())
                 .alarmType(alarm.getAlarmType())

@@ -16,10 +16,10 @@ import java.time.LocalDateTime;
 @Builder
 @Getter
 public class AlarmDto {
-    private int id;
+    private Long id;
     private AlarmType alarmType;
-    private Integer fromUserId;// 알림을 발생시킨 user id)
-    private Integer targetId;// 알림이 발생된 post id)
+    private Long fromUserId;// 알림을 발생시킨 user id)
+    private Long targetId;// 알림이 발생된 post id)
     private String text;
     private LocalDateTime createdAt;
     public static Page<AlarmDto> toAlarmList(Page<Alarm> alarms) {

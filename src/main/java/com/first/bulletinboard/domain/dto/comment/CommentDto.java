@@ -16,10 +16,10 @@ import java.time.LocalDateTime;
 @Builder
 @Getter
 public class CommentDto {
-    private Integer id;
+    private Long id;
     private String comment;
     private String userName;
-    private Integer postId;
+    private Long postId;
     private LocalDateTime createdAt;
     private LocalDateTime lastModifiedAt;
 

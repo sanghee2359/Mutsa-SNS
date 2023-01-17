@@ -22,7 +22,7 @@ import javax.persistence.*;
 public class Alarm extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     // 알람을 받은 사람
     @ManyToOne(fetch = FetchType.LAZY)
@@ -33,8 +33,8 @@ public class Alarm extends BaseEntity{
     @JsonProperty
     private AlarmType alarmType; // like인지 comment인지
 
-    private Integer fromUserId;
-    private Integer targetId; // post.id
+    private Long fromUserId;
+    private Long targetId; // post.id
     private String text;
 
 }

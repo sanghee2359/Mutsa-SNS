@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class UserJoinResponse {
-    private int userId;
+    private Long userId;
     private String userName;
 }

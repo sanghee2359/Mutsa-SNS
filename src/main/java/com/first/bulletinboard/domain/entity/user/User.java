@@ -32,7 +32,7 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private Integer id;
+    private Long id;
     @Column(unique = true)
     private String userName;
     @Column(nullable = false)
@@ -40,7 +40,7 @@ public class User implements UserDetails {
 
     @CreatedDate
     @Column(nullable = false)
-    private LocalDateTime registeredAt; // 가입한 시간
+    private LocalDateTime createdAt; // 가입한 시간
 
     @LastModifiedDate
     @Column(nullable = false)

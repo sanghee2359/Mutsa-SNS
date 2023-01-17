@@ -4,15 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.first.bulletinboard.domain.ErrorResponse;
 import com.first.bulletinboard.domain.Response;
 import com.first.bulletinboard.exception.ErrorCode;
-import com.first.bulletinboard.service.UserService;
 import com.first.bulletinboard.utils.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -24,42 +22,48 @@ import java.io.IOException;
 @Slf4j
 public class JwtTokenFilter extends OncePerRequestFilter {
 
-    private final UserService userService;
+    /**
+     * request 에서 전달받은 Jwt 토큰을 확인
+     */
+
+    private final String BEARER = "Bearer ";
+
+    private final JwtTokenUtil jwtTokenUtil;
     private final String secretKey;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+        request.setAttribute("existsToken", true); // 토큰 존재 여부 초기화
+        if (isEmptyToken(token)) {
+//            log.info("{}", token);
+            request.setAttribute("existsToken", false); // 토큰이 없는 경우 false로 변경
+        }
 
-        final String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
-
-        if(authorization == null || !authorization.startsWith("Bearer ")) {
-            log.info("authorization을 잘못 보냈습니다.");
+        // token null이거나 Bearer type 여부 확인
+        if (token == null || !token.startsWith(BEARER)) {
             filterChain.doFilter(request, response);
             return;
         }
-        // userName에서 token꺼내기
-        String token = authorization.split(" ")[1];
-        if(JwtTokenUtil.isExpired(token, secretKey)) {
-            log.info("token이 만료되었습니다.");
-            filterChain.doFilter(request, response);
-            return;
+        log.info("authentication:{}",token);
+        token = parseBearer(token);
+        log.info("token(filter):{}",token);
+
+        // 유효성 체크
+        if (jwtTokenUtil.validateToken(token,secretKey)) {
+            Authentication authentication = jwtTokenUtil.getAuthentication(token,secretKey);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         }
-
-        // username 꺼내기
-        String userName = JwtTokenUtil.getUserName(token, secretKey);
-        log.info("userName:{}", userName);
-
-        //Role 가져오기
-        UserDetails userDetails = userService.loadUserByUsername(userName);
-
-        // authentication 구현체(객체 생성)
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities()); // 권한
-
-        // detail 추가
-        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         filterChain.doFilter(request, response);
     }
+    private boolean isEmptyToken(String token) {
+        return token == null || "".equals(token);
+    }
+
+    private String parseBearer(String token) {
+        return token.substring(BEARER.length());
+    }
+
 
     /**
      * Security Chain 에서 발생하는 에러 응답 구성

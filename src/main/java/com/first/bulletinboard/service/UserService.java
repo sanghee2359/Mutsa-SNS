@@ -50,8 +50,9 @@ public class UserService implements UserDetailsService {
                     .role(roleUser.getRole())
                     .updatedAt(roleUser.getUpdatedAt())
                     .removedAt(roleUser.getRemovedAt())
-                    .registeredAt(roleUser.getRegisteredAt())
+                    .createdAt(roleUser.getCreatedAt())
                     .build();
+            log.info("user details User :{}",authUser.getUsername());
             return authUser;
         }
         return null;
@@ -90,15 +91,16 @@ public class UserService implements UserDetailsService {
         if(!encoder.matches(password, user.getPassword())){
             throw new AppException(INVALID_PASSWORD);
         }
-        return JwtTokenUtil.createToken(userName,secretKey,expireTimeMs);
+        return JwtTokenUtil.generateToken(user,secretKey,expireTimeMs);
     }
 
-    public UserDto roleChange(int id) {
+    public UserDto roleChange(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND));
 
         if(user.getRole() == UserRole.USER) {
             user.setRole(UserRole.ADMIN);
+
             userRepository.save(user);
         }else if(user.getRole() == UserRole.ADMIN) {
             user.setRole(UserRole.USER);
@@ -108,6 +110,7 @@ public class UserService implements UserDetailsService {
     }
 
     public Page<UserDto> findAllUser(Pageable pageable) {
+        log.info("find users in service ");
         return userRepository.findAll(pageable).map(User::toUserDto);
     }
 }

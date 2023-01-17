@@ -60,9 +60,9 @@ class AlarmControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
-    User user = User.builder().id(1).userName("user1").password("password1").build();
-    Post post1 = Post.builder().id(1).title("title1").body("body1").user(user).build();
-    Comment comment1 = Comment.builder().id(1).comment("comment1").user(user).post(post1).build();
+    User user = User.builder().id(1l).userName("user1").password("password1").build();
+    Post post1 = Post.builder().id(1l).title("title1").body("body1").user(user).build();
+    Comment comment1 = Comment.builder().id(1l).comment("comment1").user(user).post(post1).build();
 //    Alarm -> user이 user에게 댓글 달았다고 가정
     Alarm alarm = Alarm.builder().alarmType(AlarmType.NEW_COMMENT_ON_POST).
             user(user).
@@ -85,8 +85,7 @@ class AlarmControllerTest {
 
         PageRequest pageable = PageRequest.of(0,20,Sort.by("createdAt").descending());
         Page<Alarm> alarmList = new PageImpl<>(alarms, pageable,1);
-        Page<AlarmDto> alarmPageList = AlarmDto.toAlarmList(alarmList);
-        when(alarmService.findAllAlarms(any(),any(Pageable.class))).thenReturn(alarmPageList);
+        when(alarmService.findAllAlarms(any(),any(Pageable.class))).thenReturn(alarmList);
 
         mockMvc.perform(get("/api/v1/alarms")
                         .with(csrf())

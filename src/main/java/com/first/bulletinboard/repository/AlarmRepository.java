@@ -7,6 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface AlarmRepository extends JpaRepository<Alarm, Integer> {
-    Page<AlarmDto> findAlarmsByUser(User user, Pageable pageable);
+public interface AlarmRepository extends JpaRepository<Alarm, Long> {
+    Page<Alarm> findAlarmsByUser(User user, Pageable pageable);
 }

@@ -24,11 +24,12 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
      * 토큰 관련 에러 핸들링
      * JwtTokenFilter 에서 발생하는 에러를 핸들링해준다.
      */
-    @SneakyThrows
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         try {
+            log.info("예외처리exception handler!");
             filterChain.doFilter(request, response);
         } catch (ExpiredJwtException e) {
 
@@ -47,6 +48,15 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
             //사용자 찾을 수 없음
             log.error("사용자를 찾을 수 없습니다.");
             setErrorResponse(response, ErrorCode.USERNAME_NOT_FOUND);
+
+        } catch (ArrayIndexOutOfBoundsException e) {
+
+            log.error("토큰을 추출할 수 없습니다.");
+            setErrorResponse(response, ErrorCode.INVALID_TOKEN);
+
+        } catch (NullPointerException e) {
+
+            filterChain.doFilter(request, response);
         }
     }
 

@@ -50,7 +50,7 @@ public class PostService {
     }
 
     // postId로 단일 조회
-    public PostDto findByPostId(int id) {
+    public PostDto findByPostId(Long id) {
         Post post = findPostById(id);
         return post.toPostDto();
     }
@@ -66,7 +66,7 @@ public class PostService {
 
     // post 업데이트
     @Transactional
-    public PostDto updateById(int postId, PostUpdateRequest request, String userName) {
+    public PostDto updateById(Long postId, PostUpdateRequest request, String userName) {
         User user = findUserByUserName(userName);
         Post updatePost = findPostById(postId);
 
@@ -76,7 +76,7 @@ public class PostService {
     }
 
     // postId로 post 삭제
-    public PostDto deleteById(int postId, String userName) {
+    public PostDto deleteById(Long postId, String userName) {
         User user = findUserByUserName(userName);
         Post deletePost = findPostById(postId);
 
@@ -100,7 +100,7 @@ public class PostService {
 
     //-------------------------------------Comment-------------------------------------//
     // create
-    public CommentDto createComment(Integer postId, CommentCreateRequest request, String userName) {
+    public CommentDto createComment(Long postId, CommentCreateRequest request, String userName) {
         User user = findUserByUserName(userName);
         Post post = findPostById(postId);
 
@@ -111,7 +111,7 @@ public class PostService {
 
     // comment update -> error메세지
     @Transactional
-    public CommentDto updateComment(int postId, int id, CommentUpdateRequest request, String userName){
+    public CommentDto updateComment(Long postId, Long id, CommentUpdateRequest request, String userName){
         User user = findUserByUserName(userName);
         Post post = findPostById(postId);
         Comment comment = findCommentById(id);
@@ -123,9 +123,10 @@ public class PostService {
         comment.modify(request.toEntity(user, post));
         return comment.toDto();
     }
-    public CommentDto deleteComment(int postId, int id, String userName) {
+    public CommentDto deleteComment(Long postId, Long id, String userName) {
         User user = findUserByUserName(userName);
         findPostById(postId);
+
         Comment comment = findCommentById(id);
 
         if(!isAccessible(comment, user))
@@ -136,7 +137,7 @@ public class PostService {
         return comment.toDto();
     }
 
-    public Page<CommentDto> findAllComments(int postId, Pageable pageable) {
+    public Page<CommentDto> findAllComments(Long postId, Pageable pageable) {
         Post post = findPostById(postId);
         Page<Comment> comments = commentRepository.findAllByPost(post, pageable);
         return CommentDto.toCommentList(comments);
@@ -155,7 +156,7 @@ public class PostService {
 
 
     // 좋아요 누르기
-    public Like pressLike(int postId, String userName) {
+    public Like pressLike(Long postId, String userName) {
         User user = findUserByUserName(userName);
         Post post = findPostById(postId);
 
@@ -167,7 +168,7 @@ public class PostService {
         } else throw new AppException(ErrorCode.ALREADY_PRESSED_LIKE);
     }
     // 좋아요 개수
-    public Integer numberOfLikes(int postId) {
+    public Integer numberOfLikes(Long postId) {
         Post post = findPostById(postId);
         return post.getLikes().size();
     }
@@ -186,16 +187,16 @@ public class PostService {
                     throw new AppException(ErrorCode.USERNAME_NOT_FOUND);
                 });
     }
-    public Post findPostById(int postId){
+    public Post findPostById(Long postId){
         return postRepository.findById(postId)
                 .orElseThrow(()-> {
                     throw new AppException(ErrorCode.POST_NOT_FOUND);
                 });
     }
-    public Comment findCommentById(int id){
+    public Comment findCommentById(Long id){
         return commentRepository.findById(id)
-                .orElseThrow(()->{
-                    throw new RuntimeException();
+                .orElseThrow(()-> {
+                    throw new AppException(ErrorCode.COMMENT_NOT_FOUND);
                 });
     }
 

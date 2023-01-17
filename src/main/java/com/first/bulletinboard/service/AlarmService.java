@@ -52,7 +52,7 @@ public class AlarmService {
     }
 
     // read
-    public Page<AlarmDto> findAllAlarms(String userName, Pageable pageable){
+    public Page<Alarm> findAllAlarms(String userName, Pageable pageable){
         User user = findUserByUserName(userName);
         return alarmRepository.findAlarmsByUser(user,pageable);
     }

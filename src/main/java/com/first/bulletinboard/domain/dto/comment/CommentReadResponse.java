@@ -13,10 +13,10 @@ import java.time.LocalDateTime;
 @Builder
 @Getter
 public class CommentReadResponse {
-    private Integer id;
+    private Long id;
     private String comment;
     private String userName;
-    private Integer postId;
+    private Long postId;
     private LocalDateTime createdAt;
     private LocalDateTime lastModifiedAt;
     public static CommentReadResponse of(CommentDto comment) {

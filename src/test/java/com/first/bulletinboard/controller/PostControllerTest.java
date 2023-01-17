@@ -78,17 +78,17 @@ class PostControllerTest {
     @BeforeEach()
     public void token() {
         long expireTimeMs = 1000 * 60 * 60;
-        token = JwtTokenUtil.createToken("user", secretKey, expireTimeMs);
+        token = JwtTokenUtil.generateToken(user, secretKey, expireTimeMs);
     }
-    User user = User.builder().id(1).userName("user").password("password").build();
-    Post post1 = Post.builder().id(1).title("title1").body("body1").user(user).build();
-    Post post2 = Post.builder().id(2).title("title2").body("body2").user(user).build();
+    User user = User.builder().id(1L).userName("user").password("password").build();
+    Post post1 = Post.builder().id(1L).title("title1").body("body1").user(user).build();
+    Post post2 = Post.builder().id(2L).title("title2").body("body2").user(user).build();
 
     PostDto postDto1 = post1.toPostDto();
     PostDto postDto2 = post2.toPostDto();
 
-    Comment comment1 = Comment.builder().id(1).comment("comment1").user(user).post(post1).build();
-    Comment comment2 = Comment.builder().id(2).comment("comment2").user(user).post(post1).build();
+    Comment comment1 = Comment.builder().id(1L).comment("comment1").user(user).post(post1).build();
+    Comment comment2 = Comment.builder().id(2L).comment("comment2").user(user).post(post1).build();
     CommentDto commentDto1 = comment1.toDto();
     CommentDto commentDto2 = comment2.toDto();
 
@@ -106,7 +106,7 @@ class PostControllerTest {
 
         // when
         when(postService.createPost(any(), any()))
-                .thenReturn(PostDto.builder().id(1).title("title1").body("body1").build());
+                .thenReturn(PostDto.builder().id(1L).title("title1").body("body1").build());
 
         // then
         mockMvc.perform(post("/api/v1/posts")
@@ -198,7 +198,7 @@ class PostControllerTest {
     @DisplayName("[GET] 포스트 1개 조회 성공 - id, title, body, userName 검증")
     void read_one_post_success() throws Exception {
         // when
-        when(postService.findByPostId(anyInt()))
+        when(postService.findByPostId(anyLong()))
                 .thenReturn(postDto1);
         // then
         mockMvc.perform(get("/api/v1/posts/1")
@@ -222,7 +222,7 @@ class PostControllerTest {
         PostUpdateRequest request = PostUpdateRequest.builder().title("title").body("body").build();
 
         // when
-        when(postService.updateById(anyInt(),any(),any())).thenReturn(postDto1);
+        when(postService.updateById(anyLong(),any(),any())).thenReturn(postDto1);
 
         // then
         mockMvc.perform(put("/api/v1/posts/1")
@@ -241,7 +241,7 @@ class PostControllerTest {
         PostUpdateRequest request = new PostUpdateRequest("title1", "body1");
 
         // given -> errorCode
-        given(postService.updateById(anyInt(),any(),any()))
+        given(postService.updateById(anyLong(),any(),any()))
                 .willThrow(new AppException(ErrorCode.INVALID_TOKEN));
 
         // then
@@ -259,7 +259,7 @@ class PostControllerTest {
         PostUpdateRequest request = new PostUpdateRequest("title1", "body1");
 
         // given -> errorCode
-        given(postService.updateById(anyInt(),any(),any()))
+        given(postService.updateById(anyLong(),any(),any()))
                 .willThrow(new AppException(ErrorCode.INVALID_PERMISSION));
 
         // then
@@ -278,7 +278,7 @@ class PostControllerTest {
         PostUpdateRequest request = new PostUpdateRequest("title1", "body1");
 
         // given -> errorCode
-        given(postService.updateById(anyInt(),any(),any()))
+        given(postService.updateById(anyLong(),any(),any()))
                 .willThrow(new AppException(ErrorCode.DATABASE_ERROR));
 
         // then
@@ -298,7 +298,7 @@ class PostControllerTest {
     @WithMockUser
     @DisplayName("[DELETE] 포스트 삭제 성공")
     void delete_post_success() throws Exception {
-        when(postService.deleteById(anyInt(),any())).thenReturn(postDto1);
+        when(postService.deleteById(anyLong(),any())).thenReturn(postDto1);
 
         mockMvc.perform(delete("/api/v1/posts/1")
                         .with(csrf())
@@ -314,7 +314,7 @@ class PostControllerTest {
     @DisplayName("[DELETE] 포스트 삭제 실패(1) : 인증 실패")
     void delete_post_fail1() throws Exception {
         // given -> errorCode
-        given(postService.deleteById(anyInt(),any()))
+        given(postService.deleteById(anyLong(),any()))
                 .willThrow(new AppException(ErrorCode.INVALID_TOKEN));
 
         mockMvc.perform(delete("/api/v1/posts/1")
@@ -328,7 +328,7 @@ class PostControllerTest {
     @DisplayName("[DELETE] 포스트 삭제 실패(2) : 작성자 불일치")
     void delete_post_fail2() throws Exception {
         // given -> errorCode
-        given(postService.deleteById(anyInt(),any()))
+        given(postService.deleteById(anyLong(),any()))
                 .willThrow(new AppException(ErrorCode.INVALID_PERMISSION));
 
         mockMvc.perform(delete("/api/v1/posts/1")
@@ -345,7 +345,7 @@ class PostControllerTest {
         PostUpdateRequest request = new PostUpdateRequest("title1", "body1");
 
         // given -> errorCode
-        given(postService.updateById(anyInt(),any(),any()))
+        given(postService.updateById(anyLong(),any(),any()))
                 .willThrow(new AppException(ErrorCode.DATABASE_ERROR));
 
         mockMvc.perform(delete("/api/v1/posts/1")
@@ -408,7 +408,7 @@ class PostControllerTest {
     @DisplayName("[POST] comment 작성 성공")
     void create_comment_success() throws Exception {
         CommentCreateRequest request = new CommentCreateRequest("comment1");
-        when(postService.createComment(anyInt(),any(),any()))
+        when(postService.createComment(anyLong(),any(),any()))
                 .thenReturn(commentDto1);
 
         mockMvc.perform(post("/api/v1/posts/{postId}/comments", 1)
@@ -416,7 +416,7 @@ class PostControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(request)))
                 .andExpect(jsonPath("$.resultCode").exists())
-                .andExpect(jsonPath("$.result.id").value(1))
+                .andExpect(jsonPath("$.result.id").value(1L))
                 .andExpect(jsonPath("$.result.userName").value("user"))
                 .andExpect(jsonPath("$.result.postId").value(1))
                 .andExpect(status().isOk())
@@ -427,11 +427,11 @@ class PostControllerTest {
     @DisplayName("[POST] 댓글 작성 실패(1) - 인증 실패 - JWT를 Bearer Token으로 보내지 않은 경우")
     void create_comment_fail1() throws Exception {
         CommentCreateRequest request = new CommentCreateRequest("comment1");
-        when(postService.createComment(anyInt(),any(),any()))
+        when(postService.createComment(anyLong(),any(),any()))
                 .thenReturn(commentDto1);
 
         // given -> errorCode
-        given(postService.createComment(anyInt(), any(),any()))
+        given(postService.createComment(anyLong(), any(),any()))
                 .willThrow(new AppException(ErrorCode.INVALID_PERMISSION));
 
         mockMvc.perform(post("/api/v1/posts/{postId}/comments",1)
@@ -447,10 +447,10 @@ class PostControllerTest {
     @DisplayName("[POST] 포스트 작성 실패(2) - 인증 실패 - JWT가 유효하지 않은 경우")
     void create_comment_fail2() throws Exception {
         CommentCreateRequest request = new CommentCreateRequest("comment1");
-        when(postService.createComment(anyInt(),any(),any()))
+        when(postService.createComment(anyLong(),any(),any()))
                 .thenReturn(commentDto1);
 
-        when(postService.createComment(anyInt(), any(),any())).thenThrow(new AppException(ErrorCode.POST_NOT_FOUND, ""));
+        when(postService.createComment(anyLong(), any(),any())).thenThrow(new AppException(ErrorCode.POST_NOT_FOUND, ""));
 
         mockMvc.perform(post("/api/v1/posts/1/comments")
                         .with(csrf())
@@ -471,7 +471,7 @@ class PostControllerTest {
         CommentUpdateRequest request = CommentUpdateRequest.builder().comment("comment1").build();
 
         // when
-        when(postService.updateComment(anyInt(),anyInt(),any(),any())).thenReturn(commentDto1);
+        when(postService.updateComment(anyLong(),anyLong(),any(),any())).thenReturn(commentDto1);
 
         // then
         mockMvc.perform(put("/api/v1/posts/1/comments/1")
@@ -490,7 +490,7 @@ class PostControllerTest {
         CommentUpdateRequest request = CommentUpdateRequest.builder().comment("comment1").build();
 
         // given -> errorCode
-        given(postService.updateComment(anyInt(),anyInt(),any(),any()))
+        given(postService.updateComment(anyLong(),anyLong(),any(),any()))
                 .willThrow(new AppException(ErrorCode.INVALID_TOKEN));
 
         // then
@@ -509,7 +509,7 @@ class PostControllerTest {
         CommentUpdateRequest request = CommentUpdateRequest.builder().comment("comment1").build();
 
         // given -> errorCode
-        given(postService.updateComment(anyInt(),anyInt(),any(),any()))
+        given(postService.updateComment(anyLong(),anyLong(),any(),any()))
                 .willThrow(new AppException(ErrorCode.POST_NOT_FOUND));
 
         // then
@@ -527,7 +527,7 @@ class PostControllerTest {
         CommentUpdateRequest request = CommentUpdateRequest.builder().comment("comment1").build();
 
         // given -> errorCode
-        given(postService.updateComment(anyInt(),anyInt(),any(),any()))
+        given(postService.updateComment(anyLong(),anyLong(),any(),any()))
                 .willThrow(new AppException(ErrorCode.INVALID_PERMISSION));
 
         // then
@@ -548,7 +548,7 @@ class PostControllerTest {
 
 
         // given -> errorCode
-        given(postService.updateComment(anyInt(),anyInt(),any(),any()))
+        given(postService.updateComment(anyLong(),anyLong(),any(),any()))
                 .willThrow(new AppException(ErrorCode.DATABASE_ERROR));
 
         // then
@@ -568,7 +568,7 @@ class PostControllerTest {
     @WithMockUser
     @DisplayName("[DELETE] 댓글 삭제 성공")
     void delete_comment_success() throws Exception {
-        when(postService.deleteComment(anyInt(),anyInt(),any())).thenReturn(commentDto1);
+        when(postService.deleteComment(anyLong(),anyLong(),any())).thenReturn(commentDto1);
 
         mockMvc.perform(delete("/api/v1/posts/1/comments/1")
                         .with(csrf())
@@ -584,7 +584,7 @@ class PostControllerTest {
     @DisplayName("[DELETE] 댓글 삭제 실패(1) : 인증 실패")
     void delete_comment_fail1() throws Exception {
         // given -> errorCode
-        given(postService.deleteComment(anyInt(),anyInt(),any()))
+        given(postService.deleteComment(anyLong(),anyLong(),any()))
                 .willThrow(new AppException(ErrorCode.INVALID_TOKEN));
 
         mockMvc.perform(delete("/api/v1/posts/1/comments/1")
@@ -596,7 +596,7 @@ class PostControllerTest {
     @WithMockUser
     @DisplayName("[DELETE] 댓글 삭제 실패(2) :  POST 없음")
     void delete_comment_fail2() throws Exception {
-        given(postService.deleteComment(anyInt(),anyInt(),any()))
+        given(postService.deleteComment(anyLong(),anyLong(),any()))
                 .willThrow(new AppException(ErrorCode.POST_NOT_FOUND));
 
         mockMvc.perform(delete("/api/v1/posts/1/comments/1")
@@ -609,7 +609,7 @@ class PostControllerTest {
     @DisplayName("[DELETE] 댓글 삭제 실패(3) : 작성자 불일치")
     void delete_comment_fail3() throws Exception {
         // given -> errorCode
-        given(postService.deleteComment(anyInt(),anyInt(),any()))
+        given(postService.deleteComment(anyLong(),anyLong(),any()))
                 .willThrow(new AppException(ErrorCode.INVALID_PERMISSION));
 
         mockMvc.perform(delete("/api/v1/posts/1/comments/1")
@@ -622,7 +622,7 @@ class PostControllerTest {
     @DisplayName("[DELETE] 댓글 삭제 실패(4) : 데이터베이스 에러")
     void delete_comment_fail4() throws Exception {
         // given -> errorCode
-        given(postService.deleteComment(anyInt(),anyInt(),any()))
+        given(postService.deleteComment(anyLong(),anyLong(),any()))
                 .willThrow(new AppException(ErrorCode.DATABASE_ERROR));
 
         mockMvc.perform(delete("/api/v1/posts/1/comments/1")
@@ -644,7 +644,7 @@ class PostControllerTest {
         comments.add(commentDto2);
         PageRequest pageable = PageRequest.of(0,20,Sort.by("createdAt").descending());
         Page<CommentDto> commentList = new PageImpl<>(comments, pageable, 2);
-        when(postService.findAllComments(anyInt(),any(Pageable.class))).thenReturn(commentList);
+        when(postService.findAllComments(anyLong(),any(Pageable.class))).thenReturn(commentList);
 
         mockMvc.perform(get("/api/v1/posts/1/comments")
                         .with(csrf())
@@ -678,7 +678,7 @@ class PostControllerTest {
     @DisplayName("[POST] 좋아요 실패(1) : 인증 실패")
     void like_fail1() throws Exception {
         // given -> errorCode
-        given(postService.pressLike(anyInt(),any()))
+        given(postService.pressLike(anyLong(),any()))
                 .willThrow(new AppException(ErrorCode.INVALID_TOKEN));
 
         mockMvc.perform(post("/api/v1/posts/1/likes")
@@ -690,7 +690,7 @@ class PostControllerTest {
     @WithMockUser
     @DisplayName("[POST] 좋아요 실패(2) :  POST 없음")
     void like_fail2() throws Exception {
-        given(postService.pressLike(anyInt(),any()))
+        given(postService.pressLike(anyLong(),any()))
                 .willThrow(new AppException(ErrorCode.POST_NOT_FOUND));
 
         mockMvc.perform(post("/api/v1/posts/1/likes")

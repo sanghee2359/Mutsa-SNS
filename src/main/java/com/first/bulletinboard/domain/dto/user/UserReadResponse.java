@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Getter
 public class UserReadResponse {
-    private int id;
+    private Long id;
     private String userName;
     private UserRole role;
 

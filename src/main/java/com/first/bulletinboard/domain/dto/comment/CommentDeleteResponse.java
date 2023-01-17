@@ -7,5 +7,5 @@ import lombok.Getter;
 @Getter
 public class CommentDeleteResponse {
     private String message;
-    private Integer id; // comment id
+    private Long id; // comment id
 }

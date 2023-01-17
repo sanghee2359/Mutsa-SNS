@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 public class PostReadResponse {
-    private int id;
+    private Long id;
     private String title;
     private String body;
     private String userName;

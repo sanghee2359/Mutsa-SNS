@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 public class PostDto {
-    private int id;
+    private Long id;
     private String userName;
     private String title;
     private String body;

@@ -7,5 +7,5 @@ import lombok.Getter;
 @Getter
 public class PostUpdateResponse {
     private String message;
-    private int postId;
+    private Long postId;
 }

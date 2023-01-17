@@ -3,6 +3,7 @@ package com.first.bulletinboard.controller;
 import com.first.bulletinboard.domain.Response;
 import com.first.bulletinboard.domain.dto.alarm.AlarmDto;
 import com.first.bulletinboard.domain.dto.alarm.AlarmReadResponse;
+import com.first.bulletinboard.domain.entity.alarm.Alarm;
 import com.first.bulletinboard.service.AlarmService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,7 +23,7 @@ public class AlarmController {
     @GetMapping
     public Response<Page<AlarmReadResponse>> findAlarmList(Authentication authentication, @PageableDefault(size = 10, sort = "createdAt",
             direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<AlarmDto> dto = alarmService.findAllAlarms(authentication.getName(), pageable);
+        Page<Alarm> dto = alarmService.findAllAlarms(authentication.getName(), pageable);
         return Response.success(dto.map(AlarmReadResponse::of));
     }
 }

@@ -6,6 +6,7 @@ import com.first.bulletinboard.config.securityErrorHandling.ExceptionHandlerFilt
 import com.first.bulletinboard.filter.JwtTokenFilter;
 import com.first.bulletinboard.service.UserService;
 
+import com.first.bulletinboard.utils.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -19,9 +20,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig  {
-    private final UserService userService;
     @Value("${jwt.token.secret}")
     private String secretKey;
+    private final JwtTokenUtil jwtTokenUtil;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
@@ -30,7 +31,7 @@ public class SecurityConfig  {
                 .cors().and()
                 .authorizeRequests()
                 .antMatchers("/api/v1/users/join", "/api/v1/users/login").permitAll()
-                .antMatchers( "/api/v1/users/list","/api/v1/users/{userId}/role/change").hasAnyRole("ADMIN")
+                .antMatchers( "/api/v1/users","/api/v1/users/{userId}/role/change").hasAnyRole("ADMIN")
                 .antMatchers(HttpMethod.GET,"/api/v1/posts/my", "/api/v1/alarms").authenticated()
                 .antMatchers(HttpMethod.POST, "/api/v1/**").authenticated()
                 .antMatchers(HttpMethod.PUT, "/api/v1/**").authenticated()
@@ -43,7 +44,7 @@ public class SecurityConfig  {
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilterBefore(new JwtTokenFilter(userService, secretKey), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtTokenFilter(jwtTokenUtil,secretKey), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new ExceptionHandlerFilter(), JwtTokenFilter.class)
                 .build();
 
