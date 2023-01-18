@@ -23,6 +23,7 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
     /**
      * 토큰 관련 에러 핸들링
      * JwtTokenFilter 에서 발생하는 에러를 핸들링해준다.
+     * <토큰의 유효성 검사>
      */
 
     @Override

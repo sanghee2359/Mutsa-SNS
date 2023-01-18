@@ -24,6 +24,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     /**
      * request 에서 전달받은 Jwt 토큰을 확인
+     *
      */
 
     private final String BEARER = "Bearer ";
@@ -36,7 +37,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         String token = request.getHeader(HttpHeaders.AUTHORIZATION);
         request.setAttribute("existsToken", true); // 토큰 존재 여부 초기화
         if (isEmptyToken(token)) {
-//            log.info("{}", token);
             request.setAttribute("existsToken", false); // 토큰이 없는 경우 false로 변경
         }
 
