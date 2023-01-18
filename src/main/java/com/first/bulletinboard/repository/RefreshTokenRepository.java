@@ -13,14 +13,14 @@ import java.util.concurrent.TimeUnit;
 
 // redis template을 사용하여 정의
 @Repository
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class RefreshTokenRepository {
 
     private RedisTemplate redisTemplate;
 
-   /* public RefreshTokenRepository(final RedisTemplate redisTemplate) {
+    public RefreshTokenRepository(final RedisTemplate redisTemplate) {
         this.redisTemplate = redisTemplate;
-    }*/
+    }
 
     public void save(final RefreshToken refreshToken) {
         ValueOperations<String, Long> valueOperations = redisTemplate.opsForValue();
@@ -30,12 +30,12 @@ public class RefreshTokenRepository {
 
     public Optional<RefreshToken> findById(final String refreshToken) {
         ValueOperations<String, Long> valueOperations = redisTemplate.opsForValue();
-        Long memberId = valueOperations.get(refreshToken);
+        Long userId = valueOperations.get(refreshToken);
 
-        if (Objects.isNull(memberId)) {
+        if (Objects.isNull(userId)) {
             return Optional.empty();
         }
 
-        return Optional.of(new RefreshToken(refreshToken, memberId));
+        return Optional.of(new RefreshToken(refreshToken, userId,RefreshToken.DEFAULT_TTL));
     }
 }

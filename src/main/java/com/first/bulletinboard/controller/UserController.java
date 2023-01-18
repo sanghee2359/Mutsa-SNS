@@ -1,6 +1,7 @@
 package com.first.bulletinboard.controller;
 
 import com.first.bulletinboard.domain.Response;
+import com.first.bulletinboard.domain.dto.token.TokenResponse;
 import com.first.bulletinboard.domain.dto.user.*;
 import com.first.bulletinboard.service.UserService;
 import com.first.bulletinboard.utils.JwtTokenUtil;
@@ -35,9 +36,9 @@ public class UserController {
     }
     // 로그인
     @PostMapping("/login")
-    public Response<UserLoginResponse> login(@RequestBody UserLoginRequest userLoginRequest) {
-        String token = userService.login(userLoginRequest.getUserName(), userLoginRequest.getPassword());
-        return Response.success(new UserLoginResponse(token));
+    public Response<TokenResponse> login(@RequestBody UserLoginRequest userLoginRequest) {
+        TokenResponse tokens = userService.login(userLoginRequest.getUserName(), userLoginRequest.getPassword());
+        return Response.success(tokens);
     }
 
     @ApiOperation(value = "user 권한 변경", notes = "ADMIN만 접근 가능합니다")
