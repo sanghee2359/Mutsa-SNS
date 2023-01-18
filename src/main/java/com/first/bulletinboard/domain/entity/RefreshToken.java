@@ -1,30 +1,32 @@
 package com.first.bulletinboard.domain.entity;
-
-import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import org.springframework.data.redis.core.RedisHash;
 
-import javax.persistence.Entity;
+
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-@Entity
-@Getter
-@NoArgsConstructor
+@RedisHash(value = "refreshToken", timeToLive = 60) // 데이터 저장 시간 60초: 만료 확인을 위해 짧게 설정
 @AllArgsConstructor
+@Getter
 public class RefreshToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @NotNull
     private String refreshToken;
-    @NotNull
-    private String userName;
+    private Long userId;
 
-    public RefreshToken updateToken(String token) {
-        this.refreshToken = token;
-        return this;
+  /*  public RefreshToken(final String refreshToken, final Long memberId) {
+        this.refreshToken = refreshToken;
+        this.userId = memberId;
     }
+*/
+    /*public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public Long getMemberId() {
+        return userId;
+    }*/
 }
