@@ -1,31 +1,31 @@
-# 📧 My SNS 프로젝트 
-<img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white">
-<img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white">
-<img src="https://img.shields.io/badge/springsecurity-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white">
-<img src="https://img.shields.io/badge/AmazonEC2-FF9900?style=for-the-badge&logo=Amazon EC2&logoColor=white">
-<img src="https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white">
+<div align=center>
+ <h2>📧 MutsaSNS</h2>  
+</div>
 
-> **주요기능 및 결과** 
-    - 회원가입, 로그인, 글쓰기, 조회, 수정, 삭제, 알람, 좋아요, 댓글  
-    [Swagger-ui](http://ec2-3-38-172-197.ap-northeast-2.compute.amazonaws.com:8080/swagger-ui/#/)
----
 
-## 🥇 요구사항
-#### 기술 스택
-- 에디터 : Intellij Ultimate
-- 개발 툴 : SpringBoot 2.7.5
-- 자바 : JAVA 11
-- 빌드 : Gradle 6.8
-- 서버 : AWS EC2
-- 배포 : Docker, gitlab
-- 데이터베이스 : MySql 8.0
-- 필수 라이브러리 : SpringBoot Web, MySQL, Spring Data JPA, Lombok, Spring Security
+## :ocean: 프로젝트 소개
+**MutsaSNS** : Mutsa-SNS로, 회원가입, 로그인, 글쓰기, 댓글, 좋아요, 알림 기능을 갖고 있는 SNS  
 
-#### EndPoint
+## :milky_way: 개발 기간
++ 2022-12-19 ~ 2022-01-11  
+
+## :globe_with_meridians: 개발 환경
++ 에디터 : Intellij Ultimate
++ 개발 툴 : SpringBoot 2.7.5
++ 자바 : JAVA 11
++ 빌드 : Gradle 6.8
++ 서버 : AWS EC2
++ 배포 : Docker
++ 데이터베이스 : MySql 8.0
++ 필수 라이브러리 : SpringBoot Web, MySQL, Spring Data JPA, Lombok, Spring Security
+
+
+
+## :blue_book: EndPoint
 <img src="src/main/resources/images/endpoint.png" width="600" height="483" align="center"/>
----
 
-## 🥈 기능 구현
+
+## 🥈 기능 구현 
 ### Infra
 - [x] EC2 생성 및 도커 설치
 - [x] gitlab 배포파일 및 ec2 크론탭 설정
@@ -55,41 +55,34 @@
 ### Test Code
 - [x] controller 테스트 코드
     - user, post, like, comment, alarm
-- [ ] service 테스트 코드 
+- [ ] service 테스트 코드
 
-### UI
-- [ ] 화면ui 설정
+### features [📜Link](https://www.notion.so/7b156fe0cf32457c8dbd4b5247657ad0?pvs=4)
 ---
+### ERD [🖼Link](https://www.notion.so/ERD-1d490e69f1c741e2a5e802f2a55cd642?pvs=4)
 
+---
+## 🔮 구조 
 
-## 🥉구조 
-#### ERD
-<img src="src/main/resources/images/erd_1.png" width="515" height="769"/>
 
 #### Architecture
-- 레이어드 아키텍처
+- 레이어 아키텍처
     - 역할에 따라 독립된 모듈로 나누어서 구성하는 패턴입니다. 
     - 각 모듈이 서로의 의존도에 따라 층층히 쌓듯이 연결되어서 전체의 시스템을 구현하는 구조
     - 특징 : 단방향 의존성. 각각의 레이어는 오직 자기보다 하위에 있는 레이어에만 의존
-<img src="src/main/resources/images/layerArchitecture.png" width="600" height="120"/>
 
-## 💬 회고
+## ✒ 회고
 #### 신경 쓴 부분
 Dto 설계를 할 때 하나의 클래스가 한 가지 기능만 갖는 `단일 책임 원칙`을 지킬 수 있도록 만들어봤다.
 - request dto, response dto
 - service controller 사이에서 변환하는 dto
-#### 개선사항
-Controller 조회`Page` test code 
-- 인접한 service 레이어가 아닌 repository 객체를 사용했는데 이 부분 리팩토링이 필요하다.
-- Controller에서 페이징 처리된 로직을 테스트 하기 위해 PageImpl을 이용해 직접 Page<dto> 객체를 만들어 주었는데,이때 null Pointer 에러가 발생했다.
-- 때문에 이 에러를 피하기 위해서 repository객체를 통해 직접 save해주었다.
 
 #### 추가사항
 Service test 코드 완성하기
 - TestInfoFixture을 사용해서 작성
 
 UI 완성 시켜보기
-- 리액트 사용해서 작성
+- vue 사용
 
  
 #### 느낀점
