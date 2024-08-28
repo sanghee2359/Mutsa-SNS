@@ -57,9 +57,9 @@
     - user, post, like, comment, alarm
 - [ ] service 테스트 코드
 
-### features [📜Link](https://www.notion.so/7b156fe0cf32457c8dbd4b5247657ad0?pvs=4)
+### features [📜Link](https://fishy-column-c27.notion.site/7b156fe0cf32457c8dbd4b5247657ad0?pvs=4)
 ---
-### ERD [🖼Link](https://www.notion.so/ERD-1d490e69f1c741e2a5e802f2a55cd642?pvs=4)
+### ERD [🖼Link](https://fishy-column-c27.notion.site/ERD-1d490e69f1c741e2a5e802f2a55cd642?pvs=4)
 
 ---
 ## 🔮 구조 
